@@ -1,5 +1,5 @@
 
-
+#' @export
 gtshat.ls <-function(X, t0, s0, h, mh, matx, eps=1e-6){
   n <- length(X$x)
   err <- 1+eps
@@ -42,7 +42,7 @@ gtshat.ls <-function(X, t0, s0, h, mh, matx, eps=1e-6){
   #   #   print(sigma.hat)
   #   # }
   #   B <- B2
-  # }  
+  # }
   return(B)
 }
 
@@ -55,12 +55,12 @@ gtthat.ls <- function(X, t0, h, muhat, max.it=300, eps=1e-10) {
   err <- 1 + eps
   t <- unlist(X$pp)
   x <- unlist(X$x)
-  if(missing(muhat)) 
+  if(missing(muhat))
     muhat <- mu.hat3.lin.ls(X=X, h=h, ep=eps)
   muhat <- unlist(muhat)
   kerns <- k.epan((t-t0)/h)
   sc <- sqrt( sum(kerns * (x - muhat)^2 ) / (sum(kerns) - 1) )
-  # if(missing(initial.sc)) sc <- mad(x - muhat) else sc <- initial.sc  
+  # if(missing(initial.sc)) sc <- mad(x - muhat) else sc <- initial.sc
   # while( ( (i <- i+1) < max.it ) && (err > eps) ) {
   #   kerns <- k.epan((t-t0)/h)
   #   sc2 <- sqrt(sc^2 * sum(kerns * rho((x-muhat)/sc,cc)) / (b * sum(kerns)))
@@ -103,9 +103,9 @@ uhat.lin.ls <- function(X, t0, h=0.1, ep=1e-6, max.it=100){
   tt <- cbind(rep(1, length(t)), t-t0)
   wk <- k.epan((t-t0)/h)
   return( coef( lm(x ~ I(t - t0), weights=wk) )[1] )
-  # 
+  #
   #   beta <- rlm(x=tt[wk>0,], y=x[wk>0])$coef
-  # while( ((it <- it + 1) < max.it ) ){ 
+  # while( ((it <- it + 1) < max.it ) ){
   #   re <- as.vector(x - tt %*% beta)/s
   #   w <- ( psi(re,cc)/re )
   #   w[ is.nan(w) ] <- 1
@@ -135,7 +135,7 @@ mu.hat2.lin.ls <- function(X, h=0.1, ep=1e-6) {
   for(i in 1:nt)
     us[i] <- uhat.lin.ls(X=X, t0=tt[i], h=h, ep=ep)
   return(us)
-  
+
 }
 
 
@@ -167,12 +167,12 @@ cov.fun.hat2.ls <- function(X, h, mh, ma, ncov=50, trace=FALSE) {
   for(j in 1:ncov) sigmahat[j] <- gtthat.ls(X=X, t0=tt[j], h=h, muhat=mh)$gtt
   for(j in 1:np) {
     t0 <- pps[j, 1]
-    s0 <- pps[j, 2]  
-    betahat[j] <- gtshat.ls(X=X, t0=t0, s0=s0, h=h, mh=mh, matx=ma, eps=1e-6) 
+    s0 <- pps[j, 2]
+    betahat[j] <- gtshat.ls(X=X, t0=t0, s0=s0, h=h, mh=mh, matx=ma, eps=1e-6)
     # gamma[s0, t0] / gamma[t0, t0]
   }
   G <- betahat <- matrix(betahat, ncov, ncov)
-  for(i in 1:ncov) 
+  for(i in 1:ncov)
     for(j in 1:ncov)
       G[i,j] <- betahat[i,j] * sigmahat[i]^2
   G <- ( G + t(G) ) / 2
@@ -191,7 +191,7 @@ cv.mu.par.ls <- function(X, k.cv=5, k = k.cv, hs=exp(seq(-4, 0, by=.6)), seed=12
   tmses <- rep(NA, lh)
   Xtmp <- vector('list', 2)
   names(Xtmp) <- c('x', 'pp')
-  tmp.par <- foreach(h=hs, .combine=c, .inorder=FALSE, .packages='MASS', 
+  tmp.par <- foreach(h=hs, .combine=c, .inorder=FALSE, .packages='MASS',
                      .export=c('uhat.lin.ls', 'k.epan')) %dopar% {
                        Xh <- relist(NA, X$x) # predictions go here
                        for(i in 1:k.cv) {
@@ -202,7 +202,7 @@ cv.mu.par.ls <- function(X, k.cv=5, k = k.cv, hs=exp(seq(-4, 0, by=.6)), seed=12
                          xhats <- rep(NA, length(ps))
                          for(l in 1:length(ps)) {
                            tmp2 <- try(uhat.lin.ls(X=Xtmp, t0=ps[l], h=h, ep=1e-6, max.it=100), silent=TRUE)
-                           if( class(tmp2) != 'try-error' ) 
+                           if( class(tmp2) != 'try-error' )
                              xhats[l] <- tmp2
                          }
                          Xh[-this] <- relist(xhats, X$x[ -this ] ) # fill predictions
@@ -218,7 +218,7 @@ cv.mu.par.ls <- function(X, k.cv=5, k = k.cv, hs=exp(seq(-4, 0, by=.6)), seed=12
                            # if(length(tmp2) > 0) {
                            tmses <- sqrt(mean(tmp2^2)) #RobStatTM::mscale(tmp2) #, delta=.3, tuning.chi=2.560841)
                          }
-                       
+
                      }
   if(exists('old.seed')) assign('.Random.seed', old.seed, envir=.GlobalEnv)
   return(list(tmse=tmp.par, h=hs))
@@ -226,7 +226,7 @@ cv.mu.par.ls <- function(X, k.cv=5, k = k.cv, hs=exp(seq(-4, 0, by=.6)), seed=12
 
 
 
-cov.fun.cv.par.ls <- function(X, muh, ncov=50, k.cv=5, hs=exp(seq(-4, 0, by=.6)), 
+cov.fun.cv.par.ls <- function(X, muh, ncov=50, k.cv=5, hs=exp(seq(-4, 0, by=.6)),
                            seed=123, k=2, s=20, reg.rho=1e-5) {
   # parallel computing version
   # CV for the covariance function
@@ -243,8 +243,8 @@ cov.fun.cv.par.ls <- function(X, muh, ncov=50, k.cv=5, hs=exp(seq(-4, 0, by=.6))
   Xtest <- Xtrain <- vector('list', 2)
   names(Xtrain) <- c('x', 'pp')
   names(Xtest) <- c('x', 'pp')
-  tmp.par <- foreach(h=hs, .combine=c, .inorder=FALSE, .packages=c('MASS', 'mgcv'), 
-                     .export=c('cov.fun.hat2.ls', 'matrixx', 'subsets', 
+  tmp.par <- foreach(h=hs, .combine=c, .inorder=FALSE, .packages=c('MASS', 'mgcv'),
+                     .export=c('cov.fun.hat2.ls', 'matrixx', 'subsets',
                                'gtthat.ls', 'gtshat.ls', 'mu.hat3.lin.ls',
                                'k.epan', 'pred.cv', 'L2.norma.mesh', 'L2.dot.product.mesh',
                                'integral')) %dopar% {
@@ -256,7 +256,7 @@ cov.fun.cv.par.ls <- function(X, muh, ncov=50, k.cv=5, hs=exp(seq(-4, 0, by=.6))
                                    Xtest$x <- X$x[ -this ]
                                    Xtest$pp <- X$pp[ -this ]
                                    ma <- matrixx(Xtrain, muh[ this ])
-                                   cov.fun <- try(cov.fun.hat2.ls(X=Xtrain, h=h, mh=muh[ this ], 
+                                   cov.fun <- try(cov.fun.hat2.ls(X=Xtrain, h=h, mh=muh[ this ],
                                                                ma=ma, ncov=50, trace=FALSE)) # $G
                                    if( class(cov.fun) != 'try-error') {
                                      if(!any(is.na(cov.fun$G))) {
@@ -264,8 +264,8 @@ cov.fun.cv.par.ls <- function(X, muh, ncov=50, k.cv=5, hs=exp(seq(-4, 0, by=.6))
                                        ttx <- cov.fun$grid #
                                        cov.fun <- matrix(fitted(gam(uu ~ s(ttx[,1], ttx[,2]))), length(tt), length(tt)) #
                                        cov.fun <- ( cov.fun + t(cov.fun) ) / 2
-                                       tmp <- try( pred.cv(X=Xtrain, muh=muh[ this ], X.pred=Xtest, 
-                                                           muh.pred=muh[ -this ], cov.fun=cov.fun, tt=tt, 
+                                       tmp <- try( pred.cv(X=Xtrain, muh=muh[ this ], X.pred=Xtest,
+                                                           muh.pred=muh[ -this ], cov.fun=cov.fun, tt=tt,
                                                            k=k, s=s, rho=reg.rho) )
                                        if( class(tmp) != 'try-error') Xhat[ -this ] <- tmp
                                      }
@@ -287,27 +287,27 @@ cov.fun.cv.par.ls <- function(X, muh, ncov=50, k.cv=5, hs=exp(seq(-4, 0, by=.6))
                                  # }
                                }
   if(exists('old.seed')) assign('.Random.seed', old.seed, envir=.GlobalEnv)
-  return(list(tmspe=tmp.par, h=hs, ncov=ncov, k=k, s=s, rho=reg.rho))  
-}  
+  return(list(tmspe=tmp.par, h=hs, ncov=ncov, k=k, s=s, rho=reg.rho))
+}
 
 # Elliptical-FPCA main function
-# 
-# 
+#
+#
 
-lsfpca <- function(X, ncpus=4, opt.h.mu, opt.h.cov, hs.mu=seq(10, 25, by=1), hs.cov=hs.mu, 
+lsfpca <- function(X, ncpus=4, opt.h.mu, opt.h.cov, hs.mu=seq(10, 25, by=1), hs.cov=hs.mu,
                   rho.param=1e-5, k = 3, s = k, trace=FALSE, seed=123, k.cv=5, ncov=50,
                   max.kappa=1e3) {
-  
-  # X is a list of 2 named elements "x", "pp" 
+
+  # X is a list of 2 named elements "x", "pp"
   # which contain the lists of observations and times for each item
   # X$x[[i]] and X$pp[[i]] are the data for the i-th individual
-  
+
   # Start cluster
   if( missing(opt.h.mu) || missing(opt.h.cov) ) {
     cl <- makeCluster(ncpus) # stopCluster(cl)
     registerDoParallel(cl)
   }
-  # run CV to find smoothing parameters for 
+  # run CV to find smoothing parameters for
   # mean and covariance function
   if(missing(opt.h.mu)) {
     aa <- cv.mu.par.ls(X, hs=hs.mu, seed=seed, k.cv=k.cv)
@@ -315,7 +315,7 @@ lsfpca <- function(X, ncpus=4, opt.h.mu, opt.h.cov, hs.mu=seq(10, 25, by=1), hs.
   }
   mh <- mu.hat3.lin.ls(X=X, h=opt.h.mu)
   if(missing(opt.h.cov)) {
-    bb <- cov.fun.cv.par.ls(X=X, muh=mh, ncov=ncov, k.cv=k.cv, hs=hs.cov, seed=seed, 
+    bb <- cov.fun.cv.par.ls(X=X, muh=mh, ncov=ncov, k.cv=k.cv, hs=hs.cov, seed=seed,
                             k=k, s=s, reg.rho=rho.param)[1:2]
     opt.h.cov <- bb$h[ which.min(bb$tmspe) ]
   }
@@ -332,12 +332,12 @@ lsfpca <- function(X, ncpus=4, opt.h.mu, opt.h.cov, hs.mu=seq(10, 25, by=1), hs.
   cov.fun2$G <- matrix(tmp, length(unique(xx[,1])), length(unique(xx[,1])))
   cov.fun2$G <- ( cov.fun2$G + t(cov.fun2$G) ) / 2
   ours <- list(mh=mh, ma=ma, cov.fun2 = cov.fun2)
-  
+
   # predicted scores, fitted values
-  Xpred.fixed <- Xpred <- pred(X=X, muh=ours$mh, cov.fun=ours$cov.fun2$G, 
-                tt=unique(ours$cov.fun2$grid[,1]), 
-                ss=unique(ours$cov.fun2$grid[,1]), k=k, s=s, rho=rho.param) 
-  
+  Xpred.fixed <- Xpred <- pred(X=X, muh=ours$mh, cov.fun=ours$cov.fun2$G,
+                tt=unique(ours$cov.fun2$grid[,1]),
+                ss=unique(ours$cov.fun2$grid[,1]), k=k, s=s, rho=rho.param)
+
   # # select rho
   # n <- length(X$x)
   # tt.grid <- unique(ours$cov.fun2$grid[,1])
@@ -355,18 +355,18 @@ lsfpca <- function(X, ncpus=4, opt.h.mu, opt.h.cov, hs.mu=seq(10, 25, by=1), hs.
   # # sigma2.2 <- mean(unlist(sigma2.2)^2) # RobStatTM::mscale(unlist(sigma2.2))^2 #, delta=.3, tuning.chi=2.560841) )
   # sigma2.2 <- mean( sapply(sigma2.2, function(a) mean(a^2) ) )
   # rho.param <- sigma2.2
-  
+
   # select rho with condition number
   la1 <- svd(ours$cov.fun2$G)$d[1]
-  # rho.param <- uniroot(function(rho, la1, max.kappa) return( (la1+rho)/rho - max.kappa ), la1=la1, 
+  # rho.param <- uniroot(function(rho, la1, max.kappa) return( (la1+rho)/rho - max.kappa ), la1=la1,
   #                      max.kappa = max.kappa, interval=c(1e-15, 1e15))$root
   rho.param <- la1/(max.kappa-1)
-  Xpred <- pred(X=X, muh=ours$mh, cov.fun=ours$cov.fun2$G, 
-                tt=unique(ours$cov.fun2$grid[,1]), 
-                ss=unique(ours$cov.fun2$grid[,1]), k=k, s=s, rho=rho.param) 
-  return(list(cov.fun = ours$cov.fun$G, muh=ours$mh, tt=unique(ours$cov.fun2$grid[,1]), 
+  Xpred <- pred(X=X, muh=ours$mh, cov.fun=ours$cov.fun2$G,
+                tt=unique(ours$cov.fun2$grid[,1]),
+                ss=unique(ours$cov.fun2$grid[,1]), k=k, s=s, rho=rho.param)
+  return(list(cov.fun = ours$cov.fun$G, muh=ours$mh, tt=unique(ours$cov.fun2$grid[,1]),
               ss=unique(ours$cov.fun2$grid[,2]), ma=ma, xis=Xpred$xis, pred=Xpred$pred,
-              xis.fixed = Xpred.fixed$xis, pred.fixed = Xpred.fixed$pred, 
+              xis.fixed = Xpred.fixed$xis, pred.fixed = Xpred.fixed$pred,
               opt.h.mu=opt.h.mu, opt.h.cov=opt.h.cov, rho.param=rho.param))
 }
 
@@ -374,7 +374,7 @@ lsfpca <- function(X, ncpus=4, opt.h.mu, opt.h.cov, hs.mu=seq(10, 25, by=1), hs.
 
 
 cov.fun.cv.new <- function(X, muh, k.cv, hs, hwide, seed=123) {
-  # CV "in the regression problem formulation" 
+  # CV "in the regression problem formulation"
   # muh = estimated mean function
   # mii <- min( ti <- unlist(X$pp) )
   # maa <- max( ti )
@@ -409,7 +409,7 @@ cov.fun.cv.new <- function(X, muh, k.cv, hs, hwide, seed=123) {
             we <- w2*w3
             M <- ma$m[ we > 0, ]
             we <- we[ we > 0]
-            B <- NA 
+            B <- NA
             if( length(we) > 0 ) B <- as.numeric( coef( lm(M[ ,2] ~ M[, 1] - 1, weights = we) ) )
             supersigma <- sd( as.numeric( M[,2] - B * M[, 1] ) )
             re[uu] <- (ma2$m[uu ,2] - beta.cv[uu] * ma2$m[uu , 1])/supersigma
@@ -424,8 +424,8 @@ cov.fun.cv.new <- function(X, muh, k.cv, hs, hwide, seed=123) {
     print(c(mspe[j], mspe1[j]))
   }
   if(exists('old.seed')) assign('.Random.seed', old.seed, envir=.GlobalEnv)
-  return(list(mspe=mspe, mspe1=mspe1))  
-}  
+  return(list(mspe=mspe, mspe1=mspe1))
+}
 
 betahat.new.ls <- function(X, h, mh, ma, ma2, trace=FALSE) {
   nn <- dim(ma2$mt)[1]
@@ -434,8 +434,8 @@ betahat.new.ls <- function(X, h, mh, ma, ma2, trace=FALSE) {
   # for(j in 1:nn) sigmahat[j] <- gtthat(X=X, t0=tt[j], h=h, muhat=mh)$gtt
   for(j in 1:nn) {
     t0 <- ma2$mt[j, 1]
-    s0 <- ma2$mt[j, 2]  
-    betahat[j] <- gtshat.ls(X=X,t0=t0,s0=s0,h=h,mh=mh,matx=ma,eps=1e-6) 
+    s0 <- ma2$mt[j, 2]
+    betahat[j] <- gtshat.ls(X=X,t0=t0,s0=s0,h=h,mh=mh,matx=ma,eps=1e-6)
     # gamma[s0, t0] / gamma[t0, t0]
   }
   return(betahat=betahat)
