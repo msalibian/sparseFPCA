@@ -12,6 +12,10 @@ data.coor2(n, mu.c = 10, np = 100, mu.f, phi)
 \item{mu.c}{the mean}
 
 \item{np}{the number of observations per curve}
+
+\item{mu.f}{the mean function}
+
+\item{phi}{a list of length 2 containing two "eigenfunctions"}
 }
 \value{
 A list with two components:
@@ -24,7 +28,7 @@ Generate regular longitudinal samples.
 }
 \details{
 Generate regular longitudinal samples. The observations
-per curve are \code{seq(0, 1, length=np)}. It uses a Karhunen-Loeve 
+per curve are \code{seq(0, 1, length=np)}. It uses a Karhunen-Loeve
 representations uing the mean function \code{mu.f} and (2)
 eigenfunctions (in \code{phi}). The scores are \code{rnorm(0, 25)}
 and \code{rnorm(0, 1)}.

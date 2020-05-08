@@ -4,7 +4,7 @@
 \alias{data.coor}
 \title{Generate irregular data}
 \usage{
-data.coor(n, mu.c = 10, nb.n = 10, nb.p = 0.25, mu.f, phi)
+data.coor(n, mu.c = 10, nb.n = 10, nb.p = 0.25)
 }
 \arguments{
 \item{n}{the number of samples}
@@ -15,6 +15,10 @@ data.coor(n, mu.c = 10, nb.n = 10, nb.p = 0.25, mu.f, phi)
 
 \item{nb.p}{the probability of success when computing the number of observations
 per curve}
+
+\item{mu.f}{the mean function}
+
+\item{phi}{a list of length 2 containing two "eigenfunctions"}
 }
 \value{
 A list with two components:
@@ -27,7 +31,7 @@ Generate sparse irregular longitudinal samples.
 }
 \details{
 Generate sparse irregular longitudinal samples. The number of observations
-per curve is \code{rbinom(nb.n, nb.p)}. It uses a Karhunen-Loeve 
+per curve is \code{rbinom(nb.n, nb.p)}. It uses a Karhunen-Loeve
 representations uing the mean function \code{mu.f} and (2)
 eigenfunctions (in \code{phi}). The scores are \code{rnorm(0, 25)}
 and \code{rnorm(0, 1)}.

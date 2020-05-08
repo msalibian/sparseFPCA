@@ -48,6 +48,7 @@ subsets <- function(n, k, set = 1:n) {
   else rbind(cbind(set[1], Recall(n - 1, k - 1, set[-1])), Recall(n - 1, k, set[-1]))
 }
 
+#' @export
 clean <- function(X, h=.02) {
   N <- length(X$x)
   for (i in 1:N){
@@ -59,6 +60,7 @@ clean <- function(X, h=.02) {
   return(X)
 }
 
+#' @export
 mu.f <- function(p) {
   tmp <- 5 + sin(p*pi*4)*10*exp(-2*p) + 5 * sin(p*pi/3) + 2 * cos(p*pi/2)
   return(tmp)
@@ -84,8 +86,8 @@ phi[[2]] <- function(t) sqrt(2)*sin(2*pi*t)
 #' @param nb.n the maximum number of observations per curve
 #' @param nb.p the probability of success when computing the number of observations
 #' per curve
-#' @mu.f the mean function
-#' @phi a list of length 2 containing two "eigenfunctions"
+#' @param mu.f the mean function
+#' @param phi a list of length 2 containing two "eigenfunctions"
 #'
 #' @return A list with two components:
 #' \item{x}{A list with the \code{n} vectors of observations (one per curve)}
@@ -130,21 +132,25 @@ k.epan <- function(x) {
 gg <- function(aa) sqrt( 25/4 * phi[[1]](aa)^2 + phi[[2]](aa)^2/4)
 ggs <- function(aa,bb) 25/4 * phi[[1]](aa) * phi[[1]](bb) + phi[[2]](aa) * phi[[2]](bb)/4
 
+#' @export
 psi <- function(r, k=1.345)
   pmin(k, pmax(-k, r))
 
+#' @export
 rho <- function(a, cc=3) {
   tmp <- 1-(1-(a/cc)^2)^3
   tmp[abs(a/cc)>1] <- 1
   return(tmp)
 }
 
+#' @export
 rhoprime <- function(a, cc=3) {
   tmp <- 6*(a/cc)*(1-(a/cc)^2)^2
   tmp[abs(a/cc)>1] <- 0
   return(tmp)
 }
 
+#' @export
 tukey.weight <- function(a) {
   tmp <- 6*(1-a^2)^2
   tmp[ abs(a) > 1 ] <- 0
@@ -160,7 +166,7 @@ tukey.weight <- function(a) {
 
 
 
-
+#' @export
 funwchiBT <- function(u,cBT){
   c <- cBT
   U <- abs(u)
@@ -185,8 +191,8 @@ funwchiBT <- function(u,cBT){
 #' @param n the number of samples
 #' @param mu.c the mean
 #' @param np the number of observations per curve
-#' @mu.f the mean function
-#' @phi a list of length 2 containing two "eigenfunctions"
+#' @param mu.f the mean function
+#' @param phi a list of length 2 containing two "eigenfunctions"
 #'
 #' @return A list with two components:
 #' \item{x}{A list with the \code{n} vectors of observations (one per curve)}
@@ -210,6 +216,7 @@ data.coor2 <- function(n, mu.c=10, np=100, mu.f, phi) {
   return(list(x=x, pp=pp))
 }
 
+#' @export
 matrixx <- function(X, mh) {
   # build all possible pairs Y_{ij}, Y_{il}, j != l
   # and the corresponding times t_{ij}, t_{i,l}, j != l
@@ -274,6 +281,7 @@ kernel3 <- function(s,t)
 
 phin <- function(t,n){sqrt(2)*sin(0.5*(2*n-1)*pi*t)}
 
+#' @export
 data.inf.C4 <- function(n, p, ep1, Sigma, mu.c=30,sigma.c=0.01,k=5) {
 
   ### Functional data
@@ -303,11 +311,13 @@ data.inf.C4 <- function(n, p, ep1, Sigma, mu.c=30,sigma.c=0.01,k=5) {
 #   return(tmp)
 # }
 
+#' @export
 mu.f2 <- function(p) {
   tmp <- p + exp(-2*p)
   return(tmp*5)
 }
 
+#' @export
 data.coor3 <- function(n, mu.c=10, nb.n=10, nb.p=.25) {
   # generate irregular data
   mi <- 0
@@ -328,6 +338,7 @@ data.coor3 <- function(n, mu.c=10, nb.n=10, nb.p=.25) {
 
 ggs2 <- function(aa,bb) 25/4 * phin(aa,1) * phin(bb,1) + phin(aa,2) * phin(bb,2)/4
 
+#' @export
 data.coor4 <- function(n, mu.c=10, nb.n=10, nb.p=.25, k = 5, eps=0.1) {
   # generate irregular data
   mi <- 0
@@ -363,7 +374,7 @@ data.coor4 <- function(n, mu.c=10, nb.n=10, nb.p=.25, k = 5, eps=0.1) {
   return(list(x=x, pp=pp, outs=outs, xis=xxis, k=k, lambdas=lambdas^2))
 }
 
-
+#' @export
 data.coor5 <- function(n, mu.c=10, nb.n=10, nb.p=.25, eps=0.1) {
   # generate irregular data
   mi <- 0
@@ -386,6 +397,7 @@ data.coor5 <- function(n, mu.c=10, nb.n=10, nb.p=.25, eps=0.1) {
   return(list(x=x, pp=pp, ncontam=ncontam))
 }
 
+#' @export
 mu.f2cont <- function(p) {
   tmp <- 25*sqrt(p)
   return(tmp)
@@ -446,6 +458,8 @@ mu.f2cont <- function(p) {
 #   return(beta)
 # }
 
+
+#' @export
 gtshat.med <- function(X,t0,s0,h,mh,matx,cc=1.56,eps=1e-6){
   # median of slopes
   n <- length(X$x)
@@ -481,7 +495,7 @@ gtshat.med <- function(X,t0,s0,h,mh,matx,cc=1.56,eps=1e-6){
   return(B)
 }
 
-
+#' @export
 gtshat <- function(X, t0, s0, h, mh, matx, cc=3.443689, eps=1e-6){ # 3.443689 4.685065 1.345
   n <- length(X$x)
   err <- 1+eps
@@ -589,7 +603,7 @@ gtshat <- function(X, t0, s0, h, mh, matx, cc=3.443689, eps=1e-6){ # 3.443689 4.
 #   return(B)
 # }
 
-
+#' @export
 gtshat.mscale <-function(X,t0,s0,h,mh,matx,cc=1.56,eps=1e-6){
   n <- length(X$x)
   err <- 1+eps
@@ -616,7 +630,7 @@ gtshat.mscale <-function(X,t0,s0,h,mh,matx,cc=1.56,eps=1e-6){
   return(B)
 }
 
-
+#' @export
 gtthat <- function(X, t0, h, muhat, b=.5, cc=1.54764, initial.sc, max.it=300, eps=1e-10) {
   # find the scale, full iterations
   # muhat should be a list as returned by mu.hat3
@@ -642,6 +656,7 @@ gtthat <- function(X, t0, h, muhat, b=.5, cc=1.54764, initial.sc, max.it=300, ep
   return(list(gtt=sc, muhat=muhat))
 }
 
+#' @export
 matrixx.rot <- function(X) {
   tmp <- relist(rep(0, length(unlist(X$x))), X$x)
   return( matrixx(X=X, mh=tmp) )
@@ -649,7 +664,7 @@ matrixx.rot <- function(X) {
 
 
 
-
+#' @export
 uhat <- function(X, t0, h=0.1, cc=1.56, ep=1e-6, max.it=100){
   x <- unlist(X$x)
   t <- unlist(X$pp)
@@ -667,6 +682,7 @@ uhat <- function(X, t0, h=0.1, cc=1.56, ep=1e-6, max.it=100){
   return(u)
 }
 
+#' @export
 uhat.lin <- function(X, t0, h=0.1, cc=1.345, ep=1e-6, max.it=100){
   x <- unlist(X$x)
   t <- unlist(X$pp)
@@ -710,6 +726,7 @@ uhat.lin <- function(X, t0, h=0.1, cc=1.345, ep=1e-6, max.it=100){
 # }
 #
 
+#' @export
 mu.hat2 <- function(X,h=0.1,cc=1.56,ep=1e-6) {
   tt <- unlist(X$pp)
   nt <- length(tt)
@@ -719,6 +736,7 @@ mu.hat2 <- function(X,h=0.1,cc=1.56,ep=1e-6) {
   return(us)
 }
 
+#' @export
 mu.hat2.lin <- function(X,h=0.1,cc=1.56,ep=1e-6) {
   tt <- unlist(X$pp)
   nt <- length(tt)
@@ -729,7 +747,7 @@ mu.hat2.lin <- function(X,h=0.1,cc=1.56,ep=1e-6) {
 
 }
 
-
+#' @export
 localMAD <- function(X,t0,h) {
   x <- unlist(X$x)
   t <- unlist(X$pp)
@@ -737,12 +755,14 @@ localMAD <- function(X,t0,h) {
   return( mad(x[window]) )
 }
 
+#' @export
 mu.hat3 <- function(X,h=0.1,cc=1.56,ep=1e-6) {
   us=relist(mu.hat2(X=X,h=h,cc=cc,ep=ep),X$x)
   return(us)
   #return(list(x=X$x,pp=X$pp,u=us))
 }
 
+#' @export
 mu.hat3.lin <- function(X,h=0.1,cc=1.56,ep=1e-6) {
   us=relist(mu.hat2.lin(X=X,h=h,cc=cc,ep=ep),X$x)
   return(us)
@@ -771,7 +791,7 @@ mu.hat3.lin <- function(X,h=0.1,cc=1.56,ep=1e-6) {
 
 
 
-
+#' @export
 mu.hat4 <- function(X, cc=1.56, ep=1e-6) {
   # all curves observed at the same time points
   pp <- X$pp[[1]]
@@ -781,7 +801,7 @@ mu.hat4 <- function(X, cc=1.56, ep=1e-6) {
   return(muh)
 }
 
-
+#' @export
 m.location <- function(x,cc=1.56,ep=1e-6, max.it=500){
 
   s <- mad(x)
@@ -819,8 +839,8 @@ kern3 <- function(s,t)
 
 phin<-function(t,n){sqrt(2)*sin(0.5*(2*n-1)*pi*t)}
 
+#' @export
 my.mvrnorm <- function(n, mu, si) {
-
   p <- length(mu)
   ul <- svd(si)
   u <- ul$u
@@ -831,7 +851,7 @@ my.mvrnorm <- function(n, mu, si) {
 
 }
 
-
+#' @export
 data.coor6 <- function(n, mu.c=10, nb.n=10, nb.p=.25, eps=0.1, cont.k=5, cont.mu = 30) {
   # generate irregular data
   # infinite dimensional process
@@ -856,7 +876,7 @@ data.coor6 <- function(n, mu.c=10, nb.n=10, nb.p=.25, eps=0.1, cont.k=5, cont.mu
   return(list(x=x, pp=pp, ncontam=ncontam))
 }
 
-
+#' @export
 data.muller <- function(n, eps, mu.c=12, ns=2:4, max.tries=100) {
   # generate irregular data
   # ns = vector of possible number of obs per trajectory
@@ -901,7 +921,7 @@ export <- function(X, file='data-efpac.csv') {
   write.csv(XT, file=file, row.names=F)
 }
 
-
+#' @export
 repmed <- function(x, y) {
   n <- length(x)
   tmp <- rep(0,n)
@@ -914,6 +934,7 @@ repmed <- function(x, y) {
   return(c(a,b))
 }
 
+#' @export
 med.w <- function(x, w=rep(1,n)) {
   oo <- order(x)
   n <- length(x)
@@ -922,6 +943,7 @@ med.w <- function(x, w=rep(1,n)) {
   return( (x[oo])[tmp] )
 }
 
+#' @export
 repmed.w <- function(x, y, w) {
   n <- length(x)
   tmp <- rep(0,n)
@@ -934,6 +956,7 @@ repmed.w <- function(x, y, w) {
   return(c(a,b))
 }
 
+#' @export
 mad.w <- function(x, w)
 {
   mu <- med.w(x=x, w=w)
@@ -979,7 +1002,7 @@ mad.w <- function(x, w)
 #   return(list(G=G, grid=pps))
 # }
 
-
+#' @export
 cov.fun.hat.mscale <- function(X, h, mh, ma, ncov=50, trace=FALSE) {
   if(trace) print("Computing cov function")
   if(missing(mh)) mh <- mu.hat3(X=X, h=h)
@@ -1032,7 +1055,7 @@ cov.fun.hat.mscale <- function(X, h, mh, ma, ncov=50, trace=FALSE) {
 #   return(list(G=G, grid=pps))
 # }
 
-
+#' @export
 cov.fun.hat2 <- function(X, h, mh, ma, ncov=50, trace=FALSE) {
   # this function uses the diagonal
   if(trace) print("Computing cov function")
@@ -1090,6 +1113,7 @@ cov.fun.hat2 <- function(X, h, mh, ma, ncov=50, trace=FALSE) {
 #   return(list(G=G, grid=pps))
 # }
 
+#' @export
 mscale.w <- function(r, w, c.BT=1.56, b.BT = 0.5, max.it = 500, eps=1e-8) {
   iiter <- 1
   sigma <- mad(r)
@@ -1113,16 +1137,7 @@ mscale.w <- function(r, w, c.BT=1.56, b.BT = 0.5, max.it = 500, eps=1e-8) {
 }
 
 
-  funwchiBT<-function(u,cBT){
-    c<- cBT
-    U <- abs(u)
-    Ugtc <- (U > c)
-    w <- (3-3*(u/c)^2+(u/c)^4)/(c*c)
-    w[Ugtc] <- 1/(U[Ugtc]*U[Ugtc])
-    w
-  }
-
-
+#' @export
 pred <- function(X, muh, cov.fun, tt, ss, k=2, s=20, rho=0) {
   # k = number of eigenfunctions to use in the KL expansion (number of scores)
   # s = number of eigenfunctions to use to compute Sigma_Y
@@ -1224,7 +1239,7 @@ L2.norma.mesh <- function(dato, mesh)
   return(sqrt(L2.dot.product.mesh(dato,dato,mesh)))
 }
 
-
+#' @export
 gtshat.Sest <- function(X,t0,s0,h,mh,matx,cc=1.56,eps=1e-6){
   n <- length(X$x)
   err <- 1+eps
@@ -1246,6 +1261,7 @@ gtshat.Sest <- function(X,t0,s0,h,mh,matx,cc=1.56,eps=1e-6){
   return(list(covast=cova[1,2],rhost=rho))
 }
 
+#' @export
 cov.fun.Sest.rho <- function(X, h, mh, ma, ncov=50, trace=FALSE) {
   if(trace) print("Computing cov function")
   if(missing(mh)) mh <- mu.hat3(X=X, h=h)
@@ -1274,6 +1290,7 @@ cov.fun.Sest.rho <- function(X, h, mh, ma, ncov=50, trace=FALSE) {
   return(list(G=G, grid=pps))
 }
 
+#' @export
 cov.fun.Sest.cov <- function(X, h, mh, ma, ncov=50, trace=FALSE) {
   if(trace) print("Computing cov function")
   if(missing(mh)) mh <- mu.hat3(X=X, h=h)
@@ -1302,7 +1319,7 @@ cov.fun.Sest.cov <- function(X, h, mh, ma, ncov=50, trace=FALSE) {
   return(list(G=G, grid=pps))
 }
 
-
+#' @export
 mattern.cov <- function(d, nu=5/2, rho=1, sigma=1) {
   tmp <- sqrt(2*nu)*d/rho
   a <- besselK(x=tmp, nu=nu) #, expon.scaled = FALSE)
@@ -1310,14 +1327,14 @@ mattern.cov <- function(d, nu=5/2, rho=1, sigma=1) {
   return( sigma^2 * 2^(1-nu) * b * a / gamma(nu) )
 }
 
-
+#' @export
 mu.f3 <- function(p) {
   tmp <- 5*sin( 2*pi*p ) * exp(-p*3)
   return(tmp*2)
 }
 
 
-
+#' @export
 data.mattern <- function(n, mu.c=10, nobs=2:5, k = 5, eps=0.1, phis, lambdas, mean.f = mu.f3) { #nb.n=10, nb.p=.25, k = 5,
   # generate irregular data
   # outliers are in the eigendecomposition
@@ -1346,6 +1363,7 @@ data.mattern <- function(n, mu.c=10, nobs=2:5, k = 5, eps=0.1, phis, lambdas, me
   return(list(x=x, pp=pp, outs=outs, xis=xxis, k=k, lambdas=lambdas))
 }
 
+#' @export
 data.mattern2 <- function(n, mu.c=c(20, 25), nobs=3:5, q = length(phis), k=q, eps=0.0, phis, lambdas, mean.f=mu.f3) { #nb.n=10, nb.p=.25,
   # generate irregular data
   # outliers are not in the eigendecomposition
@@ -1406,7 +1424,7 @@ data.mattern2 <- function(n, mu.c=c(20, 25), nobs=3:5, q = length(phis), k=q, ep
 # }
 
 
-
+#' @export
 mu.f4 <- function(p) {
   tmp <- mu.f3(p)
   p2 <- p[ p > .5 ]
@@ -1480,6 +1498,7 @@ tmns <- function(x, alpha) {
 #   return(list(tmse=tmses, h=hs))
 # }
 
+#' @export
 cv.mu.par <- function(X, k.cv=5, k = k.cv, hs=exp(seq(-4, 0, by=.6)), alpha=.4, seed=123) {
   # parallel computing version
   # Cross validation for the mean function
@@ -1525,7 +1544,7 @@ cv.mu.par <- function(X, k.cv=5, k = k.cv, hs=exp(seq(-4, 0, by=.6)), alpha=.4, 
 }
 
 
-
+#' @export
 cov.fun.cv.par <- function(X, muh, ncov=50, k.cv=5, hs=exp(seq(-4, 0, by=.6)),
                        alpha=.4, seed=123, k=2, s=20, reg.rho=1e-5) {
   # parallel computing version
@@ -1591,7 +1610,7 @@ cov.fun.cv.par <- function(X, muh, ncov=50, k.cv=5, hs=exp(seq(-4, 0, by=.6)),
   return(list(tmspe=tmp.par, h=hs, ncov=ncov, k=k, s=s, rho=reg.rho))
 }
 
-
+#' @export
 cov.fun.cv <- function(X, muh, ncov=50, k.cv=5, hs=exp(seq(-4, 0, by=.6)),
                        alpha=.4, seed=123, k=2, s=20, reg.rho=1e-5) {
   # CV for the covariance function
@@ -1693,7 +1712,7 @@ cov.fun.cv <- function(X, muh, ncov=50, k.cv=5, hs=exp(seq(-4, 0, by=.6)),
 # }
 
 
-
+#' @export
 pred.cv <- function(X, muh, X.pred, muh.pred, cov.fun, tt, k=2, s=20, rho=0) {
   # prediction based on cov.fun
   # but for trajectories not present in X (those in X.pred)
@@ -1736,6 +1755,7 @@ pred.cv <- function(X, muh, X.pred, muh.pred, cov.fun, tt, k=2, s=20, rho=0) {
   return(Xhat)
 }
 
+#' @export
 mysparseWiener <- function(n, pts, K, npc, mean.f=function(a) 0, mu.c=0, eps=0) {
   # n = number of curves
   # K = number of components to use to generate
@@ -1762,6 +1782,7 @@ mysparseWiener <- function(n, pts, K, npc, mean.f=function(a) 0, mu.c=0, eps=0) 
   return(tmp)
 }
 
+#' @export
 mysparseWiener2 <- function(n, q, k, mi=0, ma=1, npc=2:5, mean.f = function(a) 0, mu.c=0, eps=0) {
   # n = number of curves
   # q = number of components to use to generate the process
@@ -1791,6 +1812,7 @@ mysparseWiener2 <- function(n, q, k, mi=0, ma=1, npc=2:5, mean.f = function(a) 0
   return(tmp)
 }
 
+#' @export
 covresids.old <- function(X, mh, gam.fit) {
     # compute r_{ijl} = [ X_i( t_{ij} ) - beta(t_{ij}, t_{il}) X_i(t_{il}) ]
     n <- length(X$x)
@@ -1815,7 +1837,7 @@ covresids.old <- function(X, mh, gam.fit) {
     return(re)
   }
 
-
+#' @export
 covresids <- function(X, mh, gam.fit) {
   # compute r_{ijl} = [ X_i( t_{ij} ) - beta(t_{ij}, t_{il}) X_i(t_{il}) ]
   n <- length(X$x)
@@ -1842,7 +1864,7 @@ covresids <- function(X, mh, gam.fit) {
 
 
 
-
+#' @export
 cov.fun.cv.res.par <- function(X, muh, ncov, k.cv, hs, seed=123) {
   # parallel computing version
   # CV for the covariance function
@@ -1895,7 +1917,7 @@ cov.fun.cv.res.par <- function(X, muh, ncov, k.cv, hs, seed=123) {
   return(list(tmspe=tmp.par, h=hs, ncov=ncov))
 }
 
-
+#' @export
 covresids.new <- function(X, mh, h, seed=123) {
   # compute r_{ijl} = [ X_i( t_{ij} ) - beta(t_{ij}, t_{il}) X_i(t_{il}) ]
   # gtshat <-function(X,t0,s0,h,mh,matx,cc=1.56,eps=1e-6){
@@ -1936,6 +1958,7 @@ covresids.new <- function(X, mh, h, seed=123) {
 #
 #
 
+#' @export
 efpca <- function(X, ncpus=4, opt.h.mu, opt.h.cov, hs.mu=seq(10, 25, by=1), hs.cov=hs.mu,
                   rho.param=1e-3, alpha=.2, k = 3, s = k, trace=FALSE, seed=123, k.cv=5,
                   ncov=50, max.kappa=1e3) {
