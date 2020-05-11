@@ -47,7 +47,7 @@ gtshat.ls <-function(X, t0, s0, h, mh, matx, eps=1e-6){
 }
 
 
-
+#' @export
 gtthat.ls <- function(X, t0, h, muhat, max.it=300, eps=1e-10) {
   # find the scale, full iterations
   # muhat should be a list as returned by mu.hat3
@@ -75,7 +75,7 @@ gtthat.ls <- function(X, t0, h, muhat, max.it=300, eps=1e-10) {
   return(list(gtt=sc, muhat=muhat))
 }
 
-
+#' @export
 uhat.ls <- function(X, t0, h=0.1, ep=1e-6, max.it=100){
   x <- unlist(X$x)
   t <- unlist(X$pp)
@@ -94,6 +94,7 @@ uhat.ls <- function(X, t0, h=0.1, ep=1e-6, max.it=100){
   # return(u)
 }
 
+#' @export
 uhat.lin.ls <- function(X, t0, h=0.1, ep=1e-6, max.it=100){
   x <- unlist(X$x)
   t <- unlist(X$pp)
@@ -118,7 +119,7 @@ uhat.lin.ls <- function(X, t0, h=0.1, ep=1e-6, max.it=100){
   # return(beta.n[1])
 }
 
-
+#' @export
 mu.hat2.ls <- function(X, h=0.1, ep=1e-6) {
   tt <- unlist(X$pp)
   nt <- length(tt)
@@ -128,6 +129,7 @@ mu.hat2.ls <- function(X, h=0.1, ep=1e-6) {
   return(us)
 }
 
+#' @export
 mu.hat2.lin.ls <- function(X, h=0.1, ep=1e-6) {
   tt <- unlist(X$pp)
   nt <- length(tt)
@@ -138,20 +140,21 @@ mu.hat2.lin.ls <- function(X, h=0.1, ep=1e-6) {
 
 }
 
-
+#' @export
 mu.hat3.ls <- function(X, h=0.1, ep=1e-6) {
   us=relist(mu.hat2.ls(X=X, h=h, ep=ep),X$x)
   return(us)
   #return(list(x=X$x,pp=X$pp,u=us))
 }
 
+#' @export
 mu.hat3.lin.ls <- function(X, h=0.1, ep=1e-6) {
   us <- relist(mu.hat2.lin.ls(X=X, h=h, ep=ep), X$x)
   return(us)
   #return(list(x=X$x,pp=X$pp,u=us))
 }
 
-
+#' @export
 cov.fun.hat2.ls <- function(X, h, mh, ma, ncov=50, trace=FALSE) {
   # this function uses the diagonal
   if(trace) print("Computing cov function")
@@ -180,6 +183,7 @@ cov.fun.hat2.ls <- function(X, h, mh, ma, ncov=50, trace=FALSE) {
   return(list(G=G, grid=pps))
 }
 
+#' @export
 cv.mu.par.ls <- function(X, k.cv=5, k = k.cv, hs=exp(seq(-4, 0, by=.6)), seed=123) {
   # parallel computing version
   # Cross validation for the mean function
@@ -225,7 +229,7 @@ cv.mu.par.ls <- function(X, k.cv=5, k = k.cv, hs=exp(seq(-4, 0, by=.6)), seed=12
 }
 
 
-
+#' @export
 cov.fun.cv.par.ls <- function(X, muh, ncov=50, k.cv=5, hs=exp(seq(-4, 0, by=.6)),
                            seed=123, k=2, s=20, reg.rho=1e-5) {
   # parallel computing version
@@ -293,7 +297,7 @@ cov.fun.cv.par.ls <- function(X, muh, ncov=50, k.cv=5, hs=exp(seq(-4, 0, by=.6))
 # Elliptical-FPCA main function
 #
 #
-
+#' @export
 lsfpca <- function(X, ncpus=4, opt.h.mu, opt.h.cov, hs.mu=seq(10, 25, by=1), hs.cov=hs.mu,
                   rho.param=1e-5, k = 3, s = k, trace=FALSE, seed=123, k.cv=5, ncov=50,
                   max.kappa=1e3) {
@@ -372,71 +376,71 @@ lsfpca <- function(X, ncpus=4, opt.h.mu, opt.h.cov, hs.mu=seq(10, 25, by=1), hs.
 
 
 
+#
+# cov.fun.cv.new <- function(X, muh, k.cv, hs, hwide, seed=123) {
+#   # CV "in the regression problem formulation"
+#   # muh = estimated mean function
+#   # mii <- min( ti <- unlist(X$pp) )
+#   # maa <- max( ti )
+#   # tt <- seq(mii, maa, length=ncov)
+#   lh <- length(hs)
+#   n <- length(X$x)
+#   if(exists(".Random.seed", where=.GlobalEnv)) old.seed <- .Random.seed
+#   set.seed(seed)
+#   fl <- sample( (1:n) %% k.cv + 1)
+#   tmspe <- rep(NA, lh)
+#   Xtest <- Xtrain <- vector('list', 2)
+#   names(Xtrain) <- c('x', 'pp')
+#   names(Xtest) <- c('x', 'pp')
+#   mspe1 <- mspe <- rep(NA, lh)
+#   for(j in 1:lh) {
+#     ress1 <- ress <- vector('numeric', 0)
+#     for(i in 1:k.cv) {
+#       this <- (1:n)[ fl != i ] # training set
+#       Xtrain$x <- X$x[ this ]
+#       Xtrain$pp <- X$pp[ this ]
+#       Xtest$x <- X$x[ -this ]
+#       Xtest$pp <- X$pp[ -this ]
+#       ma <- matrixx(Xtrain, muh[ this ])
+#       ma2 <- matrixx(Xtest, muh[ -this ])
+#       beta.cv <- try(betahat.new.ls(X=Xtrain, h=hs[j], mh=muh[ this ],
+#                                  ma=ma, ma2=ma2, trace=FALSE))
+#       if( class(beta.cv) != 'try-error') {
+#         re1 <- re <- rep(NA, length(beta.cv))
+#         for(uu in 1:length(beta.cv)) {
+#             w2 <- k.epan((ma$mt[,1]-ma2$mt[uu,1])/hwide)
+#             w3 <- k.epan((ma$mt[,2]-ma2$mt[uu,1])/hwide)
+#             we <- w2*w3
+#             M <- ma$m[ we > 0, ]
+#             we <- we[ we > 0]
+#             B <- NA
+#             if( length(we) > 0 ) B <- as.numeric( coef( lm(M[ ,2] ~ M[, 1] - 1, weights = we) ) )
+#             supersigma <- sd( as.numeric( M[,2] - B * M[, 1] ) )
+#             re[uu] <- (ma2$m[uu ,2] - beta.cv[uu] * ma2$m[uu , 1])/supersigma
+#             re1[uu] <- (ma2$m[uu ,2] - beta.cv[uu] * ma2$m[uu , 1])
+#         }
+#         ress <- c(ress, re)
+#         ress1 <- c(ress1, re1)
+#       }
+#     }
+#     mspe1[j] <- mean( ress1^2 )
+#     mspe[j] <- mean( ress^2 )
+#     print(c(mspe[j], mspe1[j]))
+#   }
+#   if(exists('old.seed')) assign('.Random.seed', old.seed, envir=.GlobalEnv)
+#   return(list(mspe=mspe, mspe1=mspe1))
+# }
 
-cov.fun.cv.new <- function(X, muh, k.cv, hs, hwide, seed=123) {
-  # CV "in the regression problem formulation"
-  # muh = estimated mean function
-  # mii <- min( ti <- unlist(X$pp) )
-  # maa <- max( ti )
-  # tt <- seq(mii, maa, length=ncov)
-  lh <- length(hs)
-  n <- length(X$x)
-  if(exists(".Random.seed", where=.GlobalEnv)) old.seed <- .Random.seed
-  set.seed(seed)
-  fl <- sample( (1:n) %% k.cv + 1)
-  tmspe <- rep(NA, lh)
-  Xtest <- Xtrain <- vector('list', 2)
-  names(Xtrain) <- c('x', 'pp')
-  names(Xtest) <- c('x', 'pp')
-  mspe1 <- mspe <- rep(NA, lh)
-  for(j in 1:lh) {
-    ress1 <- ress <- vector('numeric', 0)
-    for(i in 1:k.cv) {
-      this <- (1:n)[ fl != i ] # training set
-      Xtrain$x <- X$x[ this ]
-      Xtrain$pp <- X$pp[ this ]
-      Xtest$x <- X$x[ -this ]
-      Xtest$pp <- X$pp[ -this ]
-      ma <- matrixx(Xtrain, muh[ this ])
-      ma2 <- matrixx(Xtest, muh[ -this ])
-      beta.cv <- try(betahat.new.ls(X=Xtrain, h=hs[j], mh=muh[ this ],
-                                 ma=ma, ma2=ma2, trace=FALSE))
-      if( class(beta.cv) != 'try-error') {
-        re1 <- re <- rep(NA, length(beta.cv))
-        for(uu in 1:length(beta.cv)) {
-            w2 <- k.epan((ma$mt[,1]-ma2$mt[uu,1])/hwide)
-            w3 <- k.epan((ma$mt[,2]-ma2$mt[uu,1])/hwide)
-            we <- w2*w3
-            M <- ma$m[ we > 0, ]
-            we <- we[ we > 0]
-            B <- NA
-            if( length(we) > 0 ) B <- as.numeric( coef( lm(M[ ,2] ~ M[, 1] - 1, weights = we) ) )
-            supersigma <- sd( as.numeric( M[,2] - B * M[, 1] ) )
-            re[uu] <- (ma2$m[uu ,2] - beta.cv[uu] * ma2$m[uu , 1])/supersigma
-            re1[uu] <- (ma2$m[uu ,2] - beta.cv[uu] * ma2$m[uu , 1])
-        }
-        ress <- c(ress, re)
-        ress1 <- c(ress1, re1)
-      }
-    }
-    mspe1[j] <- mean( ress1^2 )
-    mspe[j] <- mean( ress^2 )
-    print(c(mspe[j], mspe1[j]))
-  }
-  if(exists('old.seed')) assign('.Random.seed', old.seed, envir=.GlobalEnv)
-  return(list(mspe=mspe, mspe1=mspe1))
-}
-
-betahat.new.ls <- function(X, h, mh, ma, ma2, trace=FALSE) {
-  nn <- dim(ma2$mt)[1]
-  betahat <- rep(NA, nn)
-  # sigmahat <- rep(NA, nn)
-  # for(j in 1:nn) sigmahat[j] <- gtthat(X=X, t0=tt[j], h=h, muhat=mh)$gtt
-  for(j in 1:nn) {
-    t0 <- ma2$mt[j, 1]
-    s0 <- ma2$mt[j, 2]
-    betahat[j] <- gtshat.ls(X=X,t0=t0,s0=s0,h=h,mh=mh,matx=ma,eps=1e-6)
-    # gamma[s0, t0] / gamma[t0, t0]
-  }
-  return(betahat=betahat)
-}
+# betahat.new.ls <- function(X, h, mh, ma, ma2, trace=FALSE) {
+#   nn <- dim(ma2$mt)[1]
+#   betahat <- rep(NA, nn)
+#   # sigmahat <- rep(NA, nn)
+#   # for(j in 1:nn) sigmahat[j] <- gtthat(X=X, t0=tt[j], h=h, muhat=mh)$gtt
+#   for(j in 1:nn) {
+#     t0 <- ma2$mt[j, 1]
+#     s0 <- ma2$mt[j, 2]
+#     betahat[j] <- gtshat.ls(X=X,t0=t0,s0=s0,h=h,mh=mh,matx=ma,eps=1e-6)
+#     # gamma[s0, t0] / gamma[t0, t0]
+#   }
+#   return(betahat=betahat)
+# }
