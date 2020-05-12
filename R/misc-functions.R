@@ -1,6 +1,3 @@
-
-library(MASS)
-
 #' Operator squared norm distance
 #'
 #' This function computes the squared "operator
@@ -29,6 +26,7 @@ norma <- function(gammax, gamma0){
   }
   return( norm )
 }
+
 
 #' All possible subsets
 #'
@@ -691,7 +689,7 @@ uhat.lin <- function(X, t0, h=0.1, cc=1.345, ep=1e-6, max.it=100){
   it <- 0
   tt <- cbind(rep(1, length(t)), t-t0)
   wk <- k.epan((t-t0)/h)
-  beta <- rlm(x=tt[wk>0,], y=x[wk>0])$coef
+  beta <- MASS::rlm(x=tt[wk>0,], y=x[wk>0])$coef
   while( ((it <- it + 1) < max.it ) ){
     re <- as.vector(x - tt %*% beta)/s
     w <- ( psi(re,cc)/re )
@@ -1757,6 +1755,7 @@ pred.cv <- function(X, muh, X.pred, muh.pred, cov.fun, tt, k=2, s=20, rho=0) {
 
 #' @export
 mysparseWiener <- function(n, pts, K, npc, mean.f=function(a) 0, mu.c=0, eps=0) {
+  # outliers have 2nd and 3rd scores contaminated
   # n = number of curves
   # K = number of components to use to generate
   # pts = vector of time points where to evaluate
@@ -1784,6 +1783,7 @@ mysparseWiener <- function(n, pts, K, npc, mean.f=function(a) 0, mu.c=0, eps=0) 
 
 #' @export
 mysparseWiener2 <- function(n, q, k, mi=0, ma=1, npc=2:5, mean.f = function(a) 0, mu.c=0, eps=0) {
+  # outliers have only the 3rd score contaminated
   # n = number of curves
   # q = number of components to use to generate the process
   # k = number of scores and eigenvalues to return
@@ -1811,6 +1811,42 @@ mysparseWiener2 <- function(n, q, k, mi=0, ma=1, npc=2:5, mean.f = function(a) 0
   tmp$xis <- tmp$xis[, 1:k]
   return(tmp)
 }
+
+#' @export
+mysparseWiener3 <- function(n, q, k, mi=0, ma=1, npc=2:5, mean.f = function(a) 0, mu.c=4, eps=0) {
+  # contamination is along the 4th eigenfunction
+  # (outliers are multiples of \phi_4)
+  # n = number of curves
+  # q = number of components to use to generate the process
+  # k = number of scores and eigenvalues to return
+  # curves are observed at a (uniformly) randomly chosen number of points
+  # from U(mi, ma)
+  # npc = vector of integers with the possible number of
+  # observations per curve (will be uniform among these)
+  phis <- function(a, j) sin(pi*(2*j-1)*a/2)*sqrt(2)
+  las <- 2/(pi*(2*(1:q)-1)) # (las = sds of scores)
+  tmp <- vector('list', 5)
+  names(tmp) <- c('x', 'pp', 'xis', 'lambdas', 'outs')
+  tmp$x <- tmp$pp <- vector('list', n)
+  tmp$xis <- matrix(NA, n, q)
+  tmp$outs <- outs <- rbinom(n, size=1, prob=eps)
+  # a <- outer(pts, 1:K, FUN=phis)
+  for(j in 1:n) {
+    pps <- sort(runif(sample(npc, 1), min=mi, max=ma))
+    tmp$xis[j, ] <- rnorm(q, mean=0, sd=las)
+    tmp$x[[j]] <- as.vector( outer(pps, 1:q, FUN=phis) %*% tmp$xis[j, ] ) + mean.f(pps)
+    if( outs[j] == 1) tmp$x[[j]] <- phis(a=pps, j=4) * rnorm(1, mean=mu.c, sd=.1)
+    tmp$pp[[j]] <- pps
+  }
+  tmp$lambdas <- las[1:k]^2
+  tmp$phis <- phis
+  tmp$xis <- tmp$xis[, 1:k]
+  return(tmp)
+}
+
+
+
+
 
 #' @export
 covresids.old <- function(X, mh, gam.fit) {
