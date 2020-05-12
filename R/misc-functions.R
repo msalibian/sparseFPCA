@@ -1220,6 +1220,7 @@ integral <- function(efe,mesh){
 # Calcula el producto interno entre dos datos (como listas)  sobre una grilla de puntos MESH en (0,1) ordenados
 ##########################
 
+#' @export
 L2.dot.product.mesh <- function(dato1, dato2, mesh)
 {
   return(integral(dato1*dato2,mesh))
@@ -1232,6 +1233,7 @@ L2.dot.product.mesh <- function(dato1, dato2, mesh)
 # (OJO ES LA NORMA no el cuadrado de la norma!!!)
 ##########################
 
+#' @export
 L2.norma.mesh <- function(dato, mesh)
 {
   return(sqrt(L2.dot.product.mesh(dato,dato,mesh)))
