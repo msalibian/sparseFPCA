@@ -1,10 +1,12 @@
 Package: sparseFPCA
-Title: What the Package Does (one line, title case)
-Version: 0.0.0.9000
-Authors@R: person("First", "Last", email = "first.last@example.com", role = c("aut", "cre"))
-Description: What the package does (one paragraph).
+Title: Robust functional PCA for longitudinal data
+Version: 0.0.0.1
+Authors@R: c(person("Matias", "Salibian-Barrera", role = c("cre"), email = "matias@stat.ubc.ca"),
+             person("Graciela", "Boente", role = "aut", email = "gboente@dm.uba.ar"))
+Description: Robust functional PCA for longitudinal data
 Depends: R (>= 3.5.0)
-License: What license is it under?
+Imports: stats, MASS, mgcv, doParallel
+License: License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.1.1
