@@ -1756,6 +1756,52 @@ pred.cv <- function(X, muh, X.pred, muh.pred, cov.fun, tt, k=2, s=20, rho=0) {
 }
 
 #' @export
+pred.scores <- function(X, muh, X.pred, muh.pred, cov.fun, tt, k=2, s=20, rho=0) {
+  # predicted scores based on cov.fun
+  # but for trajectories not present in X (those in X.pred)
+  # X: training set
+  # muh: estimated mean for training set
+  # X.pred: test set
+  # muh.pred: estimated mean for test set
+
+  # eg <- eigen(cov.fun)
+  # lam <- eg$values[1:max(k,s)]
+  # ef <- eg$vectors[,1:max(k,s)]
+  eg <- svd(cov.fun)
+  lam <- eg$d[1:max(k,s)]
+  ef <- eg$u[,1:max(k,s)]
+  lam[ lam < 0 ] <- 0
+  s1 <- max( (1:max(k,s))[ lam > 1e-5 ] )
+  normas <- apply(ef, 2, L2.norma.mesh, mesh=tt) # rep(1, max(k,s))
+  efn <- scale(ef, center=FALSE, scale=normas)
+  ff <- vector('list', max(k,s))
+  for(i in 1:max(k,s))
+    ff[[i]] <- approxfun(tt, efn[,i], method='linear')
+  n <- length(X.pred$x)
+  xis <- matrix(NA, n, k)
+  # Xhat <- relist(NA, X.pred$x)
+  for(i in 1:n) {
+    ti <- X.pred$pp[[i]]
+    xic <- X.pred$x[[i]] - muh.pred[[i]]
+    phis <- matrix(NA, length(ti), max(k,s))
+    for(j in 1:max(k,s))
+      phis[,j] <- ff[[j]](ti)
+    siy <- phis[,1:s1, drop=FALSE] %*% diag( lam[1:s1] ) %*% t(phis[,1:s1, drop=FALSE])
+    rhs <- as.vector( solve(siy + rho * diag(length(ti)), xic ) )
+    if(k > 1) {
+      xis[i,] <- t( phis[,1:k, drop=FALSE] %*% diag( lam[1:k] ) ) %*% rhs
+    } else {
+      xis[i,] <- t( phis[,1, drop=FALSE] * lam[1] ) %*% rhs
+    }
+    # Xhat[[i]] <- as.vector( phis[,1:k, drop=FALSE] %*% as.vector( xis[i,] ) ) + muh.pred[[i]]
+  }
+  return(xis)
+}
+
+
+
+
+#' @export
 mysparseWiener <- function(n, pts, K, npc, mean.f=function(a) 0, mu.c=0, eps=0) {
   # outliers have 2nd and 3rd scores contaminated
   # n = number of curves
