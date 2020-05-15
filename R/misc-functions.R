@@ -2262,8 +2262,8 @@ mscale.long <- function(pp, delta = 0.5, tuning.chi = 1.547645, max.it = 100, to
 
 #' @export sparseGaussKernel sparseSquaredExp
 sparseGaussKernel <- sparseSquaredExp <- function(n, nte, mi=0, ma=1, npc=2:5,
-                      mean.f = function(a) 0, mu.c=4, eps=0,
-                      scale = 1, theta = .2*(ma - mi)) {
+                      mean.f = function(a) 0, mu.c=30, eps=0,
+                      scale = 1, theta = .2*(ma - mi), phi.cont = function(a) NA) {
   # contamination ?
   # n = number of curves
   # nte = size of the U(mi, ma) grid on which to evaluate the process
@@ -2272,6 +2272,10 @@ sparseGaussKernel <- sparseSquaredExp <- function(n, nte, mi=0, ma=1, npc=2:5,
   # observations per curve (will be uniform among these)
   # scale, theta = parameters for the covariance
   # function which is "scale*exp(-abs(s-t)/theta)"
+
+  # contamination is along the eigenfunction in phi.cont
+  # with score N(mu.c, 1)
+  # eps = proportion of contamination
 
   # grid of points to evaluate process
   te <- sort( runif(nte, min=mi, max=ma) )
@@ -2289,10 +2293,11 @@ sparseGaussKernel <- sparseSquaredExp <- function(n, nte, mi=0, ma=1, npc=2:5,
   names(tmp) <- c('x', 'pp', 'xis', 'lambdas', 'outs')
   tmp$x <- tmp$pp <- vector('list', n)
   # tmp$xis <- matrix(NA, n, q)
-  # tmp$outs <- outs <- rbinom(n, size=1, prob=eps)
+  tmp$outs <- outs <- rbinom(n, size=1, prob=eps)
   for(j in 1:n) {
     pps <- sort( sample.int(n=nte, size=sample(npc, 1)) )
     tmp$x[[j]] <- as.vector( full.dat[j, pps] ) + mean.f(te[pps])
+    if( outs[j] == 1 ) tmp$x[[j]] <- phi.cont(te[pps]) * rnorm(1, mean=mu.c, sd=1)
     tmp$pp[[j]] <- te[pps]
   }
   return(tmp)

@@ -33,8 +33,8 @@ sparseExp <- function(n, nte, mi=0, ma=1, npc=2:5,
 }}
 \usage{
 sparseGaussKernel(n, nte, mi = 0, ma = 1, npc = 2:5,
-  mean.f = function(a) 0, mu.c = 4, eps = 0, scale = 1,
-  theta = 0.2 * (ma - mi))
+  mean.f = function(a) 0, mu.c = 30, eps = 0, scale = 1,
+  theta = 0.2 * (ma - mi), phi.cont = function(a) NA)
 }
 \description{
 #' @export
