@@ -64,9 +64,6 @@ mu.f <- function(p) {
   return(tmp)
 }
 
-phi <- vector('list', 2)
-phi[[1]] <- function(t) sqrt(2)*cos(2*pi*t)
-phi[[2]] <- function(t) sqrt(2)*sin(2*pi*t)
 
 
 #' Generate irregular data
@@ -99,6 +96,9 @@ data.coor <- function(n, mu.c=10, nb.n=10, nb.p=.25) {
   ma <- 1
   pp <- x <- vector('list', n)
   np <- rnbinom(n, nb.n, nb.p)
+  phi <- vector('list', 2)
+  phi[[1]] <- function(t) sqrt(2)*cos(2*pi*t)
+  phi[[2]] <- function(t) sqrt(2)*sin(2*pi*t)
   for(i in 1:n) {
     npi <- np[i]
     pp[[i]] <- sort( runif(npi, min=mi, max=ma) )
@@ -127,8 +127,8 @@ k.epan <- function(x) {
   return(k.epan)
 }
 
-gg <- function(aa) sqrt( 25/4 * phi[[1]](aa)^2 + phi[[2]](aa)^2/4)
-ggs <- function(aa,bb) 25/4 * phi[[1]](aa) * phi[[1]](bb) + phi[[2]](aa) * phi[[2]](bb)/4
+# gg <- function(aa) sqrt( 25/4 * phi[[1]](aa)^2 + phi[[2]](aa)^2/4)
+# ggs <- function(aa,bb) 25/4 * phi[[1]](aa) * phi[[1]](bb) + phi[[2]](aa) * phi[[2]](bb)/4
 
 #' @export
 psi <- function(r, k=1.345)
@@ -277,7 +277,7 @@ kernel3 <- function(s,t)
 }
 
 
-phin <- function(t,n){sqrt(2)*sin(0.5*(2*n-1)*pi*t)}
+# phin <- function(t,n){sqrt(2)*sin(0.5*(2*n-1)*pi*t)}
 
 #' @export
 data.inf.C4 <- function(n, p, ep1, Sigma, mu.c=30,sigma.c=0.01,k=5) {
@@ -287,6 +287,7 @@ data.inf.C4 <- function(n, p, ep1, Sigma, mu.c=30,sigma.c=0.01,k=5) {
   ma <- 1
   np <- p
   pp <- seq(mi, ma, length=np)
+  phin <- function(t,n){sqrt(2)*sin(0.5*(2*n-1)*pi*t)}
 
   direction.cont <- phin(pp,k)
   x <- my.mvrnorm(n, rep(0,p), Sigma)
@@ -322,6 +323,7 @@ data.coor3 <- function(n, mu.c=10, nb.n=10, nb.p=.25) {
   ma <- 1
   pp <- x <- vector('list', n)
   np <- rnbinom(n, nb.n, nb.p)
+  phin <- function(t,n){sqrt(2)*sin(0.5*(2*n-1)*pi*t)}
   for(i in 1:n) {
     npi <- np[i]
     pp[[i]] <- sort( runif(npi, min=mi, max=ma) )
@@ -334,7 +336,7 @@ data.coor3 <- function(n, mu.c=10, nb.n=10, nb.p=.25) {
   return(list(x=x, pp=pp))
 }
 
-ggs2 <- function(aa,bb) 25/4 * phin(aa,1) * phin(bb,1) + phin(aa,2) * phin(bb,2)/4
+# ggs2 <- function(aa,bb) 25/4 * phin(aa,1) * phin(bb,1) + phin(aa,2) * phin(bb,2)/4
 
 #' @export
 data.coor4 <- function(n, mu.c=10, nb.n=10, nb.p=.25, k = 5, eps=0.1) {
@@ -380,6 +382,7 @@ data.coor5 <- function(n, mu.c=10, nb.n=10, nb.p=.25, eps=0.1) {
   pp <- x <- vector('list', n)
   np <- rnbinom(n, nb.n, nb.p)
   ncontam=rbinom(1,n,eps)
+  phin <- function(t,n){sqrt(2)*sin(0.5*(2*n-1)*pi*t)}
   for(i in 1:n){
     npi <- np[i]
     pp[[i]] <- sort( runif(npi, min=mi, max=ma) )
@@ -835,7 +838,8 @@ kern3 <- function(s,t)
   return((1/2)*exp(-0.9*log(2)*abs(s-t)^2)  )
 }
 
-phin<-function(t,n){sqrt(2)*sin(0.5*(2*n-1)*pi*t)}
+# phin <- function(t,n){sqrt(2)*sin(0.5*(2*n-1)*pi*t)}
+# phin <- function(t,n){sqrt(2)*sin(0.5*(2*n-1)*pi*t)}
 
 #' @export
 my.mvrnorm <- function(n, mu, si) {
@@ -858,6 +862,7 @@ data.coor6 <- function(n, mu.c=10, nb.n=10, nb.p=.25, eps=0.1, cont.k=5, cont.mu
   pp <- x <- vector('list', n)
   np <- pmax(rnbinom(n, nb.n, nb.p), 2) # no curve with a single obs
   ncontam <- rbinom(1,n,eps)
+  phin <- function(t,n){sqrt(2)*sin(0.5*(2*n-1)*pi*t)}
   for(i in 1:n) {
     npi <- np[i]
     pp[[i]] <- sort( runif(npi, min=mi, max=ma) )
@@ -2223,5 +2228,35 @@ mscale.long <- function(pp, delta = 0.5, tuning.chi = 1.547645, max.it = 100, to
     s0 <- s1
   }
   return(s0)
+}
+
+#' @export
+sparseExp <- function(n, nte, mi=0, ma=1, npc=2:5,
+                      mean.f = function(a) 0, mu.c=4, eps=0,
+                      scale = 1, theta = .2*(ma - mi)) {
+  # contamination ?
+  # n = number of curves
+  # nte = size of the U(mi, ma) grid on which to evaluate the process
+  # (these points will then be sampled for sparsity)
+  # npc = vector of integers with the possible number of
+  # observations per curve (will be uniform among these)
+  # scale, theta = parameters for the covariance
+  # function which is "scale*exp(-abs(s-t)/theta)"
+  te <- sort( runif(nte, min=mi, max=ma) )
+  my.par <- list(scale=scale, theta=theta)
+  full.dat  <- fda.usc::rproc2fdata(n=n, t=te, sigma="vexponential",
+                      par.list=my.par)$data
+  dimnames(full.dat) <- NULL
+  tmp <- vector('list', 5)
+  names(tmp) <- c('x', 'pp', 'xis', 'lambdas', 'outs')
+  tmp$x <- tmp$pp <- vector('list', n)
+  # tmp$xis <- matrix(NA, n, q)
+  # tmp$outs <- outs <- rbinom(n, size=1, prob=eps)
+  for(j in 1:n) {
+    pps <- sort( sample.int(n=nte, size=sample(npc, 1)) )
+    tmp$x[[j]] <- as.vector( full.dat[j, pps] ) + mean.f(te[pps])
+    tmp$pp[[j]] <- te[pps]
+  }
+  return(tmp)
 }
 

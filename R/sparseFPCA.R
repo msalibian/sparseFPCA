@@ -13,3 +13,6 @@ NULL
 
 #' @import mgcv doParallel
 NULL
+
+#' @importFrom fda.usc rproc2fdata
+NULL
