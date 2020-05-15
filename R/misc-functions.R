@@ -2260,3 +2260,60 @@ sparseExp <- function(n, nte, mi=0, ma=1, npc=2:5,
   return(tmp)
 }
 
+#' @export
+sparseSquaredExp <- function(n, nte, mi=0, ma=1, npc=2:5,
+                      mean.f = function(a) 0, mu.c=4, eps=0,
+                      scale = 1, theta = .2*(ma - mi)) {
+  # contamination ?
+  # n = number of curves
+  # nte = size of the U(mi, ma) grid on which to evaluate the process
+  # (these points will then be sampled for sparsity)
+  # npc = vector of integers with the possible number of
+  # observations per curve (will be uniform among these)
+  # scale, theta = parameters for the covariance
+  # function which is "scale*exp(-abs(s-t)/theta)"
+
+  # grid of points to evaluate process
+  te <- sort( runif(nte, min=mi, max=ma) )
+  # G(a, b) = scale^2 * exp( -(a-b)^2 / theta )
+  si <- outer(te, te,
+              function(a, b, scale, theta) scale^2 * exp( -(a-b)^2 / theta ),
+              scale=scale, theta=theta)
+  # a square root of si using SVD
+  si.svd <- svd(si)
+  a <- si.svd$v %*% diag( sqrt( si.svd$d ) )
+  # generate n Gaussian vectors with cov matrix si
+  p <- length(te)
+  full.dat <- matrix(rnorm(n*p), n, p) %*% t(a)
+  tmp <- vector('list', 5)
+  names(tmp) <- c('x', 'pp', 'xis', 'lambdas', 'outs')
+  tmp$x <- tmp$pp <- vector('list', n)
+  # tmp$xis <- matrix(NA, n, q)
+  # tmp$outs <- outs <- rbinom(n, size=1, prob=eps)
+  for(j in 1:n) {
+    pps <- sort( sample.int(n=nte, size=sample(npc, 1)) )
+    tmp$x[[j]] <- as.vector( full.dat[j, pps] ) + mean.f(te[pps])
+    tmp$pp[[j]] <- te[pps]
+  }
+  return(tmp)
+}
+
+# grid of points to evaluate process
+te <- seq(0, 1, length = 500)
+# parameters of the covariance function
+# G(a, b) = scale^2 * exp( -(a-b)^2 / theta )
+scale <- 1
+theta <- .25
+si <- outer(te, te,
+            function(a, b, scale, theta) scale^2 * exp( -(a-b)^2 / theta ),
+            scale=scale, theta=theta)
+# a square root of si using SVD
+si.svd <- svd(si)
+a <- si.svd$v %*% diag( sqrt( si.svd$d ) )
+# generate n Gaussian vectors with cov matrix si
+n <- 10
+p <- length(te)
+set.seed(123)
+tmp <- matrix(rnorm(n*p), n, p) %*% t(a)
+matplot(t(tmp), x=te, type='l', lty=1, main=paste0('theta: ', theta))
+
