@@ -2302,3 +2302,55 @@ sparseGaussKernel <- sparseSquaredExp <- function(n, nte, mi=0, ma=1, npc=2:5,
   }
   return(tmp)
 }
+
+#' @export sparseGaussKernel2 sparseSquaredExp2
+sparseGaussKernel2 <- sparseSquaredExp2 <- function(n, nte, mi=0, ma=1, npc=2:5,
+                                                  mean.f = function(a) 0,
+                                                  mu.c.1 = 5, mu.c.2 = 5, sigma, eps=0,
+                                                  scale = 1, theta = .2*(ma - mi),
+                                                  phis) {
+  # contamination ?
+  # n = number of curves
+  # nte = size of the U(mi, ma) grid on which to evaluate the process
+  # (these points will then be sampled for sparsity)
+  # npc = vector of integers with the possible number of
+  # observations per curve (will be uniform among these)
+  # scale, theta = parameters for the covariance function which is "scale*exp(-abs(s-t)/theta)"
+  # phis = list of first 2 eigenfunctions
+  # contamination is on z1 * phis[[1]] + z2 * phis[[2]]
+  # where (z1, z2)^T ~ N((mu.c.1, mu.c.2)^T, \Sigma)
+  # eps = proportion of contamination
+
+  # grid of points to evaluate process
+  te <- sort( runif(nte, min=mi, max=ma) )
+  # G(a, b) = scale^2 * exp( -(a-b)^2 / theta )
+  si <- outer(te, te,
+              function(a, b, scale, theta) scale^2 * exp( -(a-b)^2 / theta ),
+              scale=scale, theta=theta)
+  # a square root of si using SVD
+  si.svd <- svd(si)
+  a <- si.svd$v %*% diag( sqrt( si.svd$d ) )
+  # generate n Gaussian vectors with cov matrix si
+  p <- length(te)
+  full.dat <- matrix(rnorm(n*p), n, p) %*% t(a)
+  # scores?
+  # to compute scores we need an equispaced grid te...
+  # or maybe we can use L2 inner products
+  # (but to check this numerically we need the L2 eigenvalues with
+  # a non-equispaced grid, which seems difficult)
+  tmp <- vector('list', 5)
+  names(tmp) <- c('x', 'pp', 'xis', 'lambdas', 'outs')
+  tmp$x <- tmp$pp <- vector('list', n)
+  # tmp$xis <- matrix(NA, n, q)
+  tmp$outs <- outs <- rbinom(n, size=1, prob=eps)
+  for(j in 1:n) {
+    pps <- sort( sample.int(n=nte, size=sample(npc, 1)) )
+    tmp$x[[j]] <- as.vector( full.dat[j, pps] ) + mean.f(te[pps])
+    if( outs[j] == 1 ) {
+      z <- t( chol(sigma) ) %*% rnorm(2) + c(mu.c.1, mu.c.2)
+      tmp$x[[j]] <- z[1] * phis[[1]](te[pps]) + z[2] * phis[[2]](te[pps])
+    }
+    tmp$pp[[j]] <- te[pps]
+  }
+  return(tmp)
+}
