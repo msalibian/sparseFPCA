@@ -2331,19 +2331,22 @@ sparseGaussKernel2 <- sparseSquaredExp2 <- function(n, nte, mi=0, ma=1, npc=2:5,
   si.svd <- svd(si)
   a <- si.svd$v %*% diag( sqrt( si.svd$d ) )
   # generate n Gaussian vectors with cov matrix si
-  p <- length(te)
-  full.dat <- matrix(rnorm(n*p), n, p) %*% t(a)
-  # scores?
+  # p <- length(te)
+  full.dat <- matrix(rnorm(n*nte), n, nte) %*% t(a)
+  tmp <- vector('list', 5)
+  names(tmp) <- c('x', 'pp', 'xis', 'lambdas', 'outs')
+  tmp$x <- tmp$pp <- vector('list', n)
+  k <- length(phis) # we compute as many scores as eigenfunctions we have
+  tmp$xis <- matrix(NA, n, k)
   # to compute scores we need an equispaced grid te...
   # or maybe we can use L2 inner products
   # (but to check this numerically we need the L2 eigenvalues with
   # a non-equispaced grid, which seems difficult)
-  tmp <- vector('list', 5)
-  names(tmp) <- c('x', 'pp', 'xis', 'lambdas', 'outs')
-  tmp$x <- tmp$pp <- vector('list', n)
-  # tmp$xis <- matrix(NA, n, q)
   tmp$outs <- outs <- rbinom(n, size=1, prob=eps)
   for(j in 1:n) {
+    for(e in 1:k) {
+      tmp$xis[j, e] <- L2.dot.product.mesh(full.dat[j, ], phis[[e]](te), te)
+    }
     pps <- sort( sample.int(n=nte, size=sample(npc, 1)) )
     tmp$x[[j]] <- as.vector( full.dat[j, pps] ) + mean.f(te[pps])
     if( outs[j] == 1 ) {
