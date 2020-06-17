@@ -1779,18 +1779,18 @@ pred.cv.whole <- function(X, muh, X.pred, muh.pred, cov.fun, tt, k=2, s=20, rho=
   s1 <- max( (1:max(k,s))[ lam > 1e-5 ] )
   normas <- apply(ef, 2, L2.norma.mesh, mesh=tt) # rep(1, max(k,s))
   efn <- scale(ef, center=FALSE, scale=normas)
-  # ff <- vector('list', max(k,s))
-  # for(i in 1:max(k,s))
-  #   ff[[i]] <- approxfun(tt, efn[,i], method='linear')
+  ff <- vector('list', max(k,s))
+  for(i in 1:max(k,s))
+    ff[[i]] <- approxfun(tt, efn[,i], method='linear')
   n <- length(X.pred$x)
   xis <- matrix(NA, n, k)
   Xhat <- relist(NA, X.pred$x)
   for(i in 1:n) {
-    # ti <- X.pred$pp[[i]]
+    ti <- X.pred$pp[[i]]
     xic <- X.pred$x[[i]] - muh.pred[[i]]
-    phis <- matrix(NA, length(tt), max(k,s))
+    phis <- matrix(NA, length(ti), max(k,s))
     for(j in 1:max(k,s))
-      phis[,j] <- efn[, i] # ff[[j]](ti)
+      phis[,j] <- ff[[j]](ti) # efn[, i] #
     siy <- phis[,1:s1, drop=FALSE] %*% diag( lam[1:s1] ) %*% t(phis[,1:s1, drop=FALSE])
     rhs <- as.vector( solve(siy + rho * diag(length(ti)), xic ) )
     if(k > 1) {
@@ -1798,7 +1798,8 @@ pred.cv.whole <- function(X, muh, X.pred, muh.pred, cov.fun, tt, k=2, s=20, rho=
     } else {
       xis[i,] <- t( phis[,1, drop=FALSE] * lam[1] ) %*% rhs
     }
-    Xhat[[i]] <- as.vector( phis[,1:k, drop=FALSE] %*% as.vector( xis[i,] ) ) + muh
+    # Xhat[[i]] <- as.vector( phis[,1:k, drop=FALSE] %*% as.vector( xis[i,] ) ) + muh
+    Xhat[[i]] <- as.vector( efn[, 1:k, drop=FALSE] %*% as.vector( xis[i,] ) ) + muh
   }
   return(Xhat)
 }
