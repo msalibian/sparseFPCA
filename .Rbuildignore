@@ -1,3 +1,11 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^.*.md
+^.*.Rmd
+^Meta$
+^doc$
+^LICENSE\.md$
+^README\.Rmd$
+.gitignore
+README_files
+README_cache
