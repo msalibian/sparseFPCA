@@ -332,3 +332,130 @@ for(j in 1:2) {
 
 ### A prediction experiment
 
+In this section we look at the prediction performance of
+these FPCA methods. We will 
+randomly split the data into a training set (80% of the
+curves) and a test set (remaining 20% of trajectories), 
+and then use the estimates of the covariance function
+obtained with the training set to predict the curves 
+of the held out individuals. 
+
+We first re-construct the data:
+```{r reconstruct.data}
+data(aids, package='catdata')
+X <- vector('list', 2) 
+names(X) <- c('x', 'pp')
+X$x <- split(aids$cd4, aids$person)
+X$pp <- split(aids$time, aids$person)
+n <- length(X$x)
+shorts <- vector('logical', n)
+for(i in 1:n) {
+  tmp <- (X$pp[[i]] >= 0)
+  X$pp[[i]] <- (X$pp[[i]])[tmp]
+  X$x[[i]] <- (X$x[[i]])[tmp]
+  if( length(X$pp[[i]]) <= 1 ) shorts[i] <- TRUE
+}
+X$x <- X$x[!shorts]
+X$pp <- X$pp[!shorts]
+X.all <- X
+```
+We now build the test and training sets. Note that
+we require that the range of times of the curves
+in the test set be 
+strictly included in the range of times for the
+curves in the training set.
+```{r training.test.sets}
+ok.sample <- FALSE
+max.it <- 20000
+set.seed(22) 
+it <- 1
+n <- length(X.all$x)
+while( !ok.sample && (it < max.it) ) { 
+  it <- it + 1
+  X.test <- X <- X.all 
+  ii <- sample(n, floor(n*.2))
+  X.test$x <- X.all$x[ii] # test set
+  X.test$pp <- X.all$pp[ii] # test set
+  X.test$trt <- X.all$trt[ii] # test set
+  X$x <- X.all$x[ -ii ] # training set
+  X$pp <- X.all$pp[ -ii ] # training set
+  X$trt <- X.all$trt[ -ii ]
+  empty.test <- (sapply(X.test$x, length) == 0)
+  empty.tr <- (sapply(X$x, length) == 0)
+  X$pp <- X$pp[!empty.tr]
+  X$x <- X$x[!empty.tr]
+  X.test$x <- X.test$x[ !empty.test ]
+  X.test$pp <- X.test$pp[ !empty.test ]
+  ra.tr <- range(unlist(X$pp))
+  ra.te <- range(unlist(X.test$pp))
+  ok.sample <- ( (ra.tr[1] < ra.te[1]) && (ra.te[2] < ra.tr[2]) )
+}
+if(!ok.sample) stop('Did not find good split')
+```
+Now we calculate the three estimators on the training set, 
+using the same settings as before (except for the bandwidth
+used to estimate the mean function, which is set to 0.3).
+```{r training, cache=TRUE}
+ncpus <- 4
+seed <- 123
+rho.param <- 1e-3 
+max.kappa <- 1e3
+ncov <- 50
+k.cv <- 5
+k <- 5
+s <- k
+hs.cov <- seq(1, 7, length=10)
+hs.mu <- .3
+ours.r.tr <- efpca(X=X, ncpus=ncpus, hs.mu=hs.mu, hs.cov=hs.cov, rho.param=rho.param, alpha=0.2,
+                k = k, s = k, trace=FALSE, seed=seed, k.cv=k.cv, ncov=ncov, max.kappa=max.kappa)
+ours.ls.tr <- lsfpca(X=X, ncpus=ncpus, hs.mu=hs.mu, hs.cov=hs.cov, rho.param=rho.param, 
+                  k = k, s = k, trace=FALSE, seed=seed, k.cv=k.cv, ncov=ncov, max.kappa=max.kappa)
+myop <- list(error=TRUE, methodXi='CE', dataType='Sparse', 
+             userBwCov = 1.5, userBwMu= .3,
+             kernel='epan', verbose=FALSE, nRegGrid=50)
+pace.tr <- FPCA(Ly=X$x, Lt=X$pp, optns=myop)
+```
+Next, using these estimated mean and covariance functions we construct
+predicted curves for the patients in the test set:
+```{r build.predictions}
+pr2.pace <- predict(pace.tr, newLy = X.test$x, newLt=X.test$pp, K = ncol(pace.tr$xiEst), xiMethod='CE')
+pp.pace <- pace.tr$phi %*% t(pr2.pace) 
+
+tts <- unlist(X$pp)
+mus <- unlist(ours.ls.tr$muh)
+mu.fn <- approxfun(x=tts, y=mus)
+mu.fn.ls <- mu.fn(ours.ls.tr$tt)
+kk <- 2
+pred.test.ls <- pred.cv.whole(X=X, muh=mu.fn.ls, X.pred=X.test,
+                        muh.pred=ours.ls$muh[ii],
+                        cov.fun=ours.ls.tr$cov.fun, tt=ours.ls.tr$tt, 
+                        k=kk, s=kk, rho=ours.ls.tr$rho.param)
+
+tts <- unlist(X$pp)
+mus <- unlist(ours.r.tr$muh)
+mu.fn <- approxfun(x=tts, y=mus)
+mu.fn.r <- mu.fn(ours.r.tr$tt)
+
+pred.test.r <- pred.cv.whole(X=X, muh=mu.fn.r, X.pred=X.test,
+                       muh.pred=ours.r$muh[ii],
+                       cov.fun=ours.r.tr$cov.fun, tt=ours.r.tr$tt, 
+                       k=kk, s=kk, rho=ours.r.tr$rho.param)
+```
+We now show 4 trajectories in the test set, along with the
+corresponding estimated curves:
+```{r show.predictions, fig.show="hold", out.width="50%"}
+xmi <- min( tmp <- unlist(X$x) )
+xma <- max( tmp )
+ymi <- min( tmp <- unlist(X$pp) )
+yma <- max( tmp ) 
+ii2 <- 1:length(X$x)
+show.these <- c(4, 46, 34, 44)
+for(j in show.these) {
+  plot(seq(ymi, yma, length=5), seq(xmi, xma,length=5), type='n', xlab='t', ylab='X(t)')
+  lines(X.test$pp[[j]], X.test$x[[j]], col='gray50', lwd=5, type='b', pch=19, cex=2)
+  lines(pace.tr$workGrid, pp.pace[,j] + pace.tr$mu, lwd=3, lty=3) 
+  lines(ours.ls.tr$tt, pred.test.ls[[j]], lwd=3, lty=2)
+  lines(ours.r.tr$tt, pred.test.r[[j]], lwd=3, lty=1)
+  legend('topright', legend=c('Robust (ROB)', 'Non-robust (LS)', 'PACE'), lwd=2, lty=1:3)
+}
+```
