@@ -1,46 +1,48 @@
-sparseFPCA
-================
-Matias Salibian-Barrera & Graciela Boente
-2020-06-18
+---
+title: "sparseFPCA"
+author: "Matias Salibian-Barrera & Graciela Boente"
+date: "`r format(Sys.Date())`"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, fig.width=6, fig.height=6, message=FALSE, warning=FALSE)
+```
 
 ##### LICENSE
+The content in this repository is  released under the 
+"Creative Commons Attribution-ShareAlike 4.0 International" license. 
+See the **human-readable version** [here](https://creativecommons.org/licenses/by-sa/4.0/)
+and the **real thing** [here](https://creativecommons.org/licenses/by-sa/4.0/legalcode). 
 
-The content in this repository is released under the “Creative Commons
-Attribution-ShareAlike 4.0 International” license. See the
-**human-readable version**
-[here](https://creativecommons.org/licenses/by-sa/4.0/) and the **real
-thing**
-[here](https://creativecommons.org/licenses/by-sa/4.0/legalcode).
+##  sparseFPCA - Robust FPCA for sparsely observed curves
 
-## sparseFPCA - Robust FPCA for sparsely observed curves
-
-This repository contains the `sparseFPCA` package, which implements a
-robust functional principal components analysis (FPCA) methodology, that
-is particularly applicable to situations where only a few observations
-per curve are available. It can also esily be used to compute a
-non-robust FPCA estimator. Details can be found here: [Boente and
-Salibian-Barrera, 2020](https://github.com/msalibian/sparseFPCA).
+This repository contains the `sparseFPCA` package, which implements a 
+robust functional principal components analysis (FPCA) methodology, that is
+particularly applicable to situations where only a few observations 
+per curve are available. It can also esily be used to compute a non-robust
+FPCA estimator. Details can be found 
+here: [Boente and Salibian-Barrera, 2020](https://github.com/msalibian/sparseFPCA).
 
 ## Installing the `sparseFPCA` package for `R`
 
-Until the package is available in CRAN, it can be installed directly
-from this repository using the following command in `R`:
-
-``` r
+Until the package is available in CRAN, it can be installed 
+directly from this repository using the following command in `R`:
+```{r install, eval=FALSE}
 devtools::install_github('msalibian/sparseFPCA', ref = "master")
 ```
 
 ## An example - CD4 data
 
-We wil illustrate the use of our method on the CD4 data, which is
-available in the `catdata` package
-([catdata](https://cran.r-project.org/package=catdata)). The data are
-part of the Multicentre AIDS Cohort Study (Zeger and Diggle, 1994). They
-consist of 2376 measurements of CD4 cell counts, taken on 369 men. The
-times are measured in years since seroconversion (`t = 0`). We first
-load the data and create a list of trajectories:
-
-``` r
+We wil illustrate the use of our method on the 
+CD4 data, which is available in the
+`catdata` package ([catdata](https://cran.r-project.org/package=catdata)). 
+The data 
+are part of the Multicentre AIDS Cohort Study (Zeger and Diggle, 1994). 
+They  consist of 2376 measurements of CD4 cell counts, taken on 369
+men. The times are measured in years since seroconversion (`t = 0`). 
+We first load the data and create a list of trajectories:
+```{r load.data}
 data(aids, package='catdata')
 X <- vector('list', 2) 
 names(X) <- c('x', 'pp')
@@ -48,13 +50,12 @@ X$x <- split(aids$cd4, aids$person)
 X$pp <- split(aids$time, aids$person)
 ```
 
-To ensure that there are enough observations to estimate the covariance
-function at every pair of times `(s, t)`, we focus on the observations
-with `t >= 0`, and on individuals with more than one measurement. This
-results in `N = 292` curves, with the number of observations per
-individual ranging between 2 and 11 (with a median of 5):
-
-``` r
+To ensure that there are enough observations to estimate the 
+covariance function at every pair of times `(s, t)`, we focus on the 
+observations with `t >= 0`, and on individuals with more than one 
+measurement. This results in `N = 292` curves, with the number 
+of observations per individual ranging between 2 and 11 (with a median of 5):
+```{r filter.data}
 n <- length(X$x)
 shorts <- vector('logical', n)
 for(i in 1:n) {
@@ -66,11 +67,10 @@ for(i in 1:n) {
 X$x <- X$x[!shorts]
 X$pp <- X$pp[!shorts]
 ```
-
-The following figure shows the data set with three randomly chosen
-trajectories highlighted with solid black lines:
-
-``` r
+The following figure shows the data set 
+with three randomly chosen trajectories highlighted with
+solid black lines:
+```{r full.data.plot, fig.width=4, fig.height=4}
 xmi <- min( tmp <- unlist(X$x) )
 xma <- max( tmp )
 ymi <- min( tmp <- unlist(X$pp) )
@@ -87,25 +87,20 @@ for(i in ii) lines(X$pp[[i]], X$x[[i]], col='black', lwd=4, type='b', pch=19,
                    cex=1, lty=1)
 ```
 
-![](README_files/figure-gfm/full.data.plot-1.png)<!-- -->
-
 ### Robust and non-robust FPCA
 
-We will compare the robust and non-robust versions of our approach with
-the PACE estimator of Yao, Muller and Wang
-([paper](https://doi.org/10.1198/016214504000001745) -
+We will compare the robust and non-robust versions of our approach
+with the PACE estimator of Yao, Muller and Wang
+([paper](https://doi.org/10.1198/016214504000001745) - 
 [package](https://cran.r-project.org/package=fdapace)). We need to load
 the following packages
-
-``` r
+```{r load.packages}
 library(sparseFPCA)
 library(doParallel)
 library(fdapace)
 ```
-
 The following are parameters
-
-``` r
+```{r parameters}
 ncpus <- 4
 seed <- 123
 rho.param <- 1e-3 
@@ -117,11 +112,10 @@ s <- k
 hs.mu <- seq(.1, 1.5, by=.1)
 hs.cov <- seq(1, 7, length=10)
 ```
-
-We now fit the robust and non-robust versions of our proposal, and also
-the PACE estimator. This step may take several minutes to run:
-
-``` r
+We now fit the robust and non-robust versions of our proposal, 
+and also the PACE estimator. This step may 
+take several minutes to run:
+```{r robust.non.robust, cache=TRUE}
 ours.ls <- lsfpca(X=X, ncpus=ncpus, hs.mu=hs.mu, hs.cov=hs.cov, rho.param=rho.param, 
                   k = k, s = k, trace=FALSE, seed=seed, k.cv=k.cv, ncov=ncov, max.kappa=max.kappa)
 ours.r <- efpca(X=X, ncpus=ncpus, hs.mu=hs.mu, hs.cov=hs.cov, rho.param=rho.param, alpha=0.2,
@@ -131,20 +125,15 @@ myop <- list(error=TRUE, methodXi='CE', dataType='Sparse',
              kernel='epan', verbose=FALSE, nRegGrid=50)
 pace <- FPCA(Ly=X$x, Lt=X$pp, optns=myop)
 ```
-
 The coverage plot:
-
-``` r
+```{r coverage.plot, fig.width=4, fig.height=4}
 plot(ours.ls$ma$mt[,1], ours.ls$ma$mt[,2], pch=19, col='gray70', cex=.8, xlab='s', ylab='t', cex.lab=1.2,
      cex.axis=1.1)
 points(ours.ls$ma$mt[,1], ours.ls$ma$mt[,1], pch=19, col='gray70', cex=.8)
 ```
 
-![](README_files/figure-gfm/coverage.plot-1.png)<!-- -->
-
 The estimated covariance functions:
-
-``` r
+```{r covariances, fig.show="hold", out.width="33%"}
 ss <- tt <- ours.ls$ss
 G.ls <- ours.ls$cov.fun
 filled.contour(tt, ss, G.ls, main='LS')
@@ -156,11 +145,8 @@ G.pace <- pace$smoothedCov
 filled.contour(tt, ss, G.pace, main='PACE')
 ```
 
-<img src="README_files/figure-gfm/covariances-1.png" width="33%" /><img src="README_files/figure-gfm/covariances-2.png" width="33%" /><img src="README_files/figure-gfm/covariances-3.png" width="33%" />
-
 Another take:
-
-``` r
+```{r covariances.2, fig.show="hold", out.width="33%"}
 persp(ours.ls$tt, ours.ls$ss, G.ls, xlab="s", ylab="t", zlab=" ", zlim=c(10000, 100000),
       theta = -30, phi = 30, r = 50, col="gray90",
       ltheta = 120, shade = 0.15,
@@ -175,12 +161,9 @@ persp(pace$workGrid, pace$workGrid, G.pace, xlab="s", ylab="t", zlab=" ",  zlim=
       ticktype="detailed", cex.axis=0.9)
 ```
 
-<img src="README_files/figure-gfm/covariances.2-1.png" width="33%" /><img src="README_files/figure-gfm/covariances.2-2.png" width="33%" /><img src="README_files/figure-gfm/covariances.2-3.png" width="33%" />
-
-The “proportion of variance” explained by the first few principal
-directions are:
-
-``` r
+The "proportion of variance" explained by the first few principal directions 
+are:
+```{r prop.var}
 dd <- svd(ours.r$cov.fun)$d
 ddls <- svd(ours.ls$cov.fun)$d
 ddp <- svd(pace$smoothedCov)$d
@@ -188,16 +171,9 @@ rbind(ours = cumsum(dd)[1:3] / sum(dd),
 ls = cumsum(ddls)[1:3] / sum(ddls), 
 pace = cumsum(ddp)[1:3] / sum(ddp))
 ```
-
-    ##           [,1]      [,2]      [,3]
-    ## ours 0.9463211 0.9979511 0.9994576
-    ## ls   0.9769791 0.9979702 0.9993578
-    ## pace 0.9173902 0.9592724 0.9883714
-
-In what follows we will use 2 principal components. The corresponding
-estimated scores are:
-
-``` r
+In what follows we will use 2 principal components. 
+The corresponding estimated scores are:
+```{r scores.plot,  fig.show="hold"}
 colors <- c('skyblue2', 'tomato3', 'gray70') #ROB, LS, PACE
 boxplot(cbind(ours.r$xis[, 1:2], ours.ls$xis[, 1:2], pace$xiEst[, 1:2]), 
         names = rep(1:2, 3),  
@@ -210,11 +186,8 @@ axis(3, las=1, at=c(1.5,3.5,5.5),
      line=0.2, pos=NA, col="white")
 ```
 
-![](README_files/figure-gfm/scores.plot-1.png)<!-- -->
-
-We now compare the first two eigenfunctions.
-
-``` r
+We now compare the first two eigenfunctions. 
+```{r eigenfunctions, fig.show="hold", out.width="50%"}
 G2 <- ours.r$cov.fun
 G2.svd <- svd(G2)$u
 G.pace <- pace$smoothedCov
@@ -242,14 +215,10 @@ for(j in 1:2) {
 }
 ```
 
-<img src="README_files/figure-gfm/eigenfunctions-1.png" width="50%" /><img src="README_files/figure-gfm/eigenfunctions-2.png" width="50%" />
-
 ### Potential outliers
 
-We look for potential outliers, using the scores on the first two
-eigenfunctions.
-
-``` r
+We look for potential outliers, using the scores on the first two eigenfunctions. 
+```{r outliers}
 kk <- 2
 xis.r  <- ours.r$xis[, 1:kk]
 xis.ls <- ours.ls$xis[, 1:kk]
@@ -261,10 +230,8 @@ ous <- (1:length(dist.ous))[ dist.ous > qchisq(.995, df=kk)]
 ous.ls <- (1:length(dist.ls))[ dist.ls > qchisq(.995, df=kk)]
 ous.pace <- (1:length(dist.pace))[ dist.pace > qchisq(.995, df=kk)]
 ```
-
 We look at the most outlying curves, as flagged by each fit:
-
-``` r
+```{r most.outlying}
 xmi <- min( tmp <- unlist(X$x) )
 xma <- max( tmp )
 ymi <- min( tmp <- unlist(X$pp) )
@@ -284,22 +251,17 @@ legend('topright', legend=c('ROB', 'LS', 'PACE'), lty=1, lwd=2,
        col=c('blue', 'skyblue3', 'tomato3'))
 ```
 
-![](README_files/figure-gfm/most.outlying-1.png)<!-- -->
-
-### Comparing fits on “cleaned” data
+### Comparing fits on "cleaned" data
 
 We now remove the outliers and re-fit the non-robust estimators:
-
-``` r
+```{r remove.outliers}
 X.clean <- X
 remove.these <- ous 
 X.clean$x <- X$x[ -remove.these ]
 X.clean$pp <- X$pp[ -remove.these ]
 ```
-
-Now re-fit on the “clean” data:
-
-``` r
+Now re-fit on the "clean" data:
+```{r clean.fits, cache=TRUE}
 ours.ls.clean <- lsfpca(X=X.clean, ncpus=ncpus, hs.mu=hs.mu, hs.cov=hs.cov, rho.param=rho.param, 
                   k = k, s = k, trace=FALSE, seed=seed, k.cv=k.cv, ncov=ncov, max.kappa=max.kappa)
 myop.clean <- list(error=TRUE, methodXi='CE', dataType='Sparse', 
@@ -307,10 +269,8 @@ myop.clean <- list(error=TRUE, methodXi='CE', dataType='Sparse',
              kernel='epan', verbose=FALSE, nRegGrid=50)
 pace.clean <- FPCA(Ly=X.clean$x, Lt=X.clean$pp, optns=myop.clean)
 ```
-
 The estimated covariance functions:
-
-``` r
+```{r clean.covariances, fig.show="hold", out.width="33%"}
 ss <- tt <- ours.ls.clean$ss
 G.ls.clean <- ours.ls.clean$cov.fun
 filled.contour(tt, ss, G.ls.clean, main='LS - Clean')
@@ -322,11 +282,8 @@ G.pace.clean <- pace.clean$smoothedCov
 filled.contour(tt, ss, G.pace.clean, main='PACE - Clean')
 ```
 
-<img src="README_files/figure-gfm/clean.covariances-1.png" width="33%" /><img src="README_files/figure-gfm/clean.covariances-2.png" width="33%" /><img src="README_files/figure-gfm/clean.covariances-3.png" width="33%" />
-
 And:
-
-``` r
+```{r clean.covariances.2, fig.show="hold", out.width="33%"}
 persp(ours.ls.clean$ss, ours.ls.clean$ss, G.ls.clean, xlab="s", ylab="t", zlab=" ",  zlim=c(10000, 100000), 
       theta = -30, phi = 30, r = 50, col="gray90",
       ltheta = 120, shade = 0.15, 
@@ -345,11 +302,8 @@ persp(pace.clean$workGrid, pace.clean$workGrid, G.pace.clean, xlab="s", ylab="t"
       main = 'PACE - Clean')
 ```
 
-<img src="README_files/figure-gfm/clean.covariances.2-1.png" width="33%" /><img src="README_files/figure-gfm/clean.covariances.2-2.png" width="33%" /><img src="README_files/figure-gfm/clean.covariances.2-3.png" width="33%" />
-
 We can also compare the eigenfunctions:
-
-``` r
+```{r eigenfunctions.2, fig.show="hold", out.width="50%"}
 G2 <- ours.r$cov.fun
 G2.svd <- svd(G2)$u
 G.pace.clean <- pace.clean$smoothedCov 
@@ -376,6 +330,5 @@ for(j in 1:2) {
 }
 ```
 
-<img src="README_files/figure-gfm/eigenfunctions.2-1.png" width="50%" /><img src="README_files/figure-gfm/eigenfunctions.2-2.png" width="50%" />
-
 ### A prediction experiment
+
