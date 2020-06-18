@@ -6,7 +6,7 @@ output: github_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, fig.width=6, fig.height=6, message=FALSE, warning=FALSE)
+knitr::opts_chunk$set(echo = TRUE, fig.width=5, fig.height=5, message=FALSE, warning=FALSE)
 ```
 
 ##### LICENSE
@@ -70,7 +70,7 @@ X$pp <- X$pp[!shorts]
 The following figure shows the data set 
 with three randomly chosen trajectories highlighted with
 solid black lines:
-```{r full.data.plot, fig.width=4, fig.height=4}
+```{r full.data.plot}
 xmi <- min( tmp <- unlist(X$x) )
 xma <- max( tmp )
 ymi <- min( tmp <- unlist(X$pp) )
@@ -126,7 +126,7 @@ myop <- list(error=TRUE, methodXi='CE', dataType='Sparse',
 pace <- FPCA(Ly=X$x, Lt=X$pp, optns=myop)
 ```
 The coverage plot:
-```{r coverage.plot, fig.width=4, fig.height=4}
+```{r coverage.plot}
 plot(ours.ls$ma$mt[,1], ours.ls$ma$mt[,2], pch=19, col='gray70', cex=.8, xlab='s', ylab='t', cex.lab=1.2,
      cex.axis=1.1)
 points(ours.ls$ma$mt[,1], ours.ls$ma$mt[,1], pch=19, col='gray70', cex=.8)
