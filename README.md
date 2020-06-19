@@ -1,27 +1,23 @@
-sparseFPCA
+Robust FPCA for sparsely observed curves
 ================
 Matias Salibian-Barrera & Graciela Boente
-2020-06-18
-
-##### LICENSE
-
-The content in this repository is released under the “Creative Commons
-Attribution-ShareAlike 4.0 International” license. See the
-**human-readable version**
-[here](https://creativecommons.org/licenses/by-sa/4.0/) and the **real
-thing**
-[here](https://creativecommons.org/licenses/by-sa/4.0/legalcode).
-
-## sparseFPCA - Robust FPCA for sparsely observed curves
+2020-06-19
 
 This repository contains the `sparseFPCA` package, which implements a
-robust functional principal components analysis (FPCA) methodology, that
+robust functional principal components analysis (FPCA) methodology that
 is particularly applicable to situations where only a few observations
 per curve are available. It can also esily be used to compute a
 non-robust FPCA estimator. Details can be found here: [Boente and
 Salibian-Barrera, 2020](https://github.com/msalibian/sparseFPCA).
 
-## Installing the `sparseFPCA` package for `R`
+**LICENSE**: The content in this repository is released under the
+“Creative Commons Attribution-ShareAlike 4.0 International” license.
+See the **human-readable version**
+[here](https://creativecommons.org/licenses/by-sa/4.0/) and the **real
+thing**
+[here](https://creativecommons.org/licenses/by-sa/4.0/legalcode).
+
+#### Installing the `sparseFPCA` package for `R`
 
 Until the package is available in CRAN, it can be installed directly
 from this repository using the following command in `R`:
@@ -30,11 +26,16 @@ from this repository using the following command in `R`:
 devtools::install_github('msalibian/sparseFPCA', ref = "master")
 ```
 
+## sparseFPCA - Robust FPCA for sparsely observed curves
+
+A brief description of the model (sparsely observed functional data).
+
 ## An example - CD4 data
 
-We wil illustrate the use of our method on the CD4 data, which is
-available in the `catdata` package
-([catdata](https://cran.r-project.org/package=catdata)). The data are
+On this page we illustrate the use of our method and compare it with
+existing alternatives. We will analyze the CD4 data, which is available
+in the `catdata` package
+([catdata](https://cran.r-project.org/package=catdata)). These data are
 part of the Multicentre AIDS Cohort Study (Zeger and Diggle, 1994). They
 consist of 2376 measurements of CD4 cell counts, taken on 369 men. The
 times are measured in years since seroconversion (`t = 0`). We first
