@@ -3,11 +3,8 @@ Robust FPCA for sparsely observed curves
 Matias Salibian-Barrera & Graciela Boente
 2020-06-19
 
-This repository contains the `sparseFPCA` package, which implements a
-robust functional principal components analysis (FPCA) methodology that
-is particularly applicable to situations where only a few observations
-per curve are available. It can also esily be used to compute a
-non-robust FPCA estimator. Details can be found here: [Boente and
+This repository contains the `sparseFPCA` package that implements the
+robust FPCA method introduced in [Boente and
 Salibian-Barrera, 2020](https://github.com/msalibian/sparseFPCA).
 
 **LICENSE**: The content in this repository is released under the
@@ -28,18 +25,31 @@ devtools::install_github('msalibian/sparseFPCA', ref = "master")
 
 ## sparseFPCA - Robust FPCA for sparsely observed curves
 
-A brief description of the model (sparsely observed functional data).
+The `sparseFPCA` package implements the robust functional principal
+components analysis (FPCA) estimator introduced in [Boente and
+Salibian-Barrera, 2020](https://github.com/msalibian/sparseFPCA).
+`sparseFPCA` computes robust estimators for the mean and covariance
+(scatter) function, and the associated eigenfunctions. It can be used
+with functional data sets where there only a few observations available
+per curve (possibly recorded at irregular intervals).
 
-## An example - CD4 data
+## An example - CD4 counts data
 
-On this page we illustrate the use of our method and compare it with
-existing alternatives. We will analyze the CD4 data, which is available
-in the `catdata` package
+Below we illustrate the use of our method and compare it with existing
+alternatives. We will analyze the CD4 data, which is available in the
+`catdata` package
 ([catdata](https://cran.r-project.org/package=catdata)). These data are
-part of the Multicentre AIDS Cohort Study (Zeger and Diggle, 1994). They
-consist of 2376 measurements of CD4 cell counts, taken on 369 men. The
-times are measured in years since seroconversion (`t = 0`). We first
-load the data and create a list of trajectories:
+part of the Multicentre AIDS Cohort Study ([Zeger and
+Diggle, 1994](https://doi.org/10.2307/2532783)). They consist of 2376
+measurements of CD4 cell counts, taken on 369 men. The times are
+measured in years since seroconversion (`t = 0`).
+
+We first load the data set and arrange it in a suitable format. Because
+the data consist of trajectories of different lengths, possibly measured
+at different times, the software requires that the observations be
+arranged in two lists, one (which we call `X$x` below) containing the
+vectors (of varying lengths) of points observed in each curve, and the
+other (`X$pp`) with the corresponding times:
 
 ``` r
 data(aids, package='catdata')
@@ -50,10 +60,9 @@ X$pp <- split(aids$time, aids$person)
 ```
 
 To ensure that there are enough observations to estimate the covariance
-function at every pair of times `(s, t)`, we focus on the observations
-with `t >= 0`, and on individuals with more than one measurement. This
-results in `N = 292` curves, with the number of observations per
-individual ranging between 2 and 11 (with a median of 5):
+function at every pair of times `(s, t)`, we only consider observations
+for which `t >= 0`, and remove individuals that only have one
+measurement.
 
 ``` r
 n <- length(X$x)
@@ -67,6 +76,31 @@ for(i in 1:n) {
 X$x <- X$x[!shorts]
 X$pp <- X$pp[!shorts]
 ```
+
+This results in a data set with `N = 292` curves, where the number of
+observations per individual ranges between 2 and 11 (with a median of
+5):
+
+``` r
+length(X$x)
+```
+
+    ## [1] 292
+
+``` r
+summary(lens <- sapply(X$x, length))
+```
+
+    ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+    ##   2.000   3.000   5.000   4.983   6.000  11.000
+
+``` r
+table(lens)
+```
+
+    ## lens
+    ##  2  3  4  5  6  7  8  9 10 11 
+    ## 51 52 35 43 39 20 23 10 15  4
 
 The following figure shows the data set with three randomly chosen
 trajectories highlighted with solid black lines:
@@ -165,15 +199,18 @@ Another take:
 persp(ours.ls$tt, ours.ls$ss, G.ls, xlab="s", ylab="t", zlab=" ", zlim=c(10000, 100000),
       theta = -30, phi = 30, r = 50, col="gray90",
       ltheta = 120, shade = 0.15,
-      ticktype="detailed", cex.axis=0.9, cex.lab=.9)
+      ticktype="detailed", cex.axis=0.9, cex.lab=.9,
+      main = 'LS')
 persp(ours.r$tt, ours.r$ss, G.r, xlab="s", ylab="t", zlab=" ",  zlim=c(10000, 100000),
       theta = -30, phi = 30, r = 50, col="gray90",
       ltheta = 120, shade = 0.15,
-      ticktype="detailed", cex.axis=0.9)
+      ticktype="detailed", cex.axis=0.9,
+      main = 'ROB')
 persp(pace$workGrid, pace$workGrid, G.pace, xlab="s", ylab="t", zlab=" ",  zlim=c(10000, 100000),
       theta = -30, phi = 30, r = 50, col="gray90",
       ltheta = 120, shade = 0.15,
-      ticktype="detailed", cex.axis=0.9)
+      ticktype="detailed", cex.axis=0.9,
+      main = 'PACE')
 ```
 
 <img src="README_files/figure-gfm/covariances.2-1.png" width="33%" /><img src="README_files/figure-gfm/covariances.2-2.png" width="33%" /><img src="README_files/figure-gfm/covariances.2-3.png" width="33%" />
