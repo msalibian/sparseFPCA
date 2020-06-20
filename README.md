@@ -1,7 +1,7 @@
 Robust FPCA for sparsely observed curves
 ================
 Matias Salibian-Barrera & Graciela Boente
-2020-06-19
+2020-06-20
 
 This repository contains the `sparseFPCA` package that implements the
 robust FPCA method introduced in [Boente and
@@ -163,7 +163,7 @@ ours.ls <- lsfpca(X=X, ncpus=ncpus, hs.mu=hs.mu, hs.cov=hs.cov, rho.param=rho.pa
 ours.r <- efpca(X=X, ncpus=ncpus, hs.mu=hs.mu, hs.cov=hs.cov, rho.param=rho.param,
                 alpha=0.2, k = k, s = k, trace=FALSE, seed=seed, k.cv=k.cv, ncov=ncov,
                 max.kappa=max.kappa)
-myop <- list(error=TRUE, methodXi='CE', dataType='Sparse', 
+myop <- list(error=FALSE, methodXi='CE', dataType='Sparse', 
              userBwCov = 1.5, userBwMu= .3, kernel='epan', verbose=FALSE, nRegGrid=50)
 pace <- FPCA(Ly=X$x, Lt=X$pp, optns=myop)
 ```
@@ -228,7 +228,7 @@ rbind(ours = cumsum(dd)[1:3] / sum(dd),
     ##           [,1]      [,2]      [,3]
     ## ours 0.9463211 0.9979511 0.9994576
     ## ls   0.9769791 0.9979702 0.9993578
-    ## pace 0.9173902 0.9592724 0.9883714
+    ## pace 0.8735757 0.9438932 0.9688466
 
 In what follows we will use 2 principal components. The corresponding
 estimated scores are:
@@ -324,7 +324,7 @@ Now re-fit on the “clean” data:
 ours.ls.clean <- lsfpca(X=X.clean, ncpus=ncpus, hs.mu=hs.mu, hs.cov=hs.cov,
                         rho.param=rho.param, k = k, s = k, trace=FALSE, 
                         seed=seed, k.cv=k.cv, ncov=ncov, max.kappa=max.kappa)
-myop.clean <- list(error=TRUE, methodXi='CE', dataType='Sparse', 
+myop.clean <- list(error=FALSE, methodXi='CE', dataType='Sparse', 
              userBwCov = 1.5, userBwMu= .3, 
              kernel='epan', verbose=FALSE, nRegGrid=50)
 pace.clean <- FPCA(Ly=X.clean$x, Lt=X.clean$pp, optns=myop.clean)
@@ -477,7 +477,7 @@ ours.r.tr <- efpca(X=X, ncpus=ncpus, hs.mu=hs.mu, hs.cov=hs.cov, rho.param=rho.p
                 k = k, s = k, trace=FALSE, seed=seed, k.cv=k.cv, ncov=ncov, max.kappa=max.kappa)
 ours.ls.tr <- lsfpca(X=X, ncpus=ncpus, hs.mu=hs.mu, hs.cov=hs.cov, rho.param=rho.param, 
                   k = k, s = k, trace=FALSE, seed=seed, k.cv=k.cv, ncov=ncov, max.kappa=max.kappa)
-myop <- list(error=TRUE, methodXi='CE', dataType='Sparse', 
+myop <- list(error=FALSE, methodXi='CE', dataType='Sparse', 
              userBwCov = 1.5, userBwMu= .3,
              kernel='epan', verbose=FALSE, nRegGrid=50)
 pace.tr <- FPCA(Ly=X$x, Lt=X$pp, optns=myop)

@@ -140,7 +140,7 @@ ours.ls <- lsfpca(X=X, ncpus=ncpus, hs.mu=hs.mu, hs.cov=hs.cov, rho.param=rho.pa
 ours.r <- efpca(X=X, ncpus=ncpus, hs.mu=hs.mu, hs.cov=hs.cov, rho.param=rho.param,
                 alpha=0.2, k = k, s = k, trace=FALSE, seed=seed, k.cv=k.cv, ncov=ncov,
                 max.kappa=max.kappa)
-myop <- list(error=TRUE, methodXi='CE', dataType='Sparse', 
+myop <- list(error=FALSE, methodXi='CE', dataType='Sparse', 
              userBwCov = 1.5, userBwMu= .3, kernel='epan', verbose=FALSE, nRegGrid=50)
 pace <- FPCA(Ly=X$x, Lt=X$pp, optns=myop)
 ```
@@ -269,7 +269,7 @@ Now re-fit on the "clean" data:
 ours.ls.clean <- lsfpca(X=X.clean, ncpus=ncpus, hs.mu=hs.mu, hs.cov=hs.cov,
                         rho.param=rho.param, k = k, s = k, trace=FALSE, 
                         seed=seed, k.cv=k.cv, ncov=ncov, max.kappa=max.kappa)
-myop.clean <- list(error=TRUE, methodXi='CE', dataType='Sparse', 
+myop.clean <- list(error=FALSE, methodXi='CE', dataType='Sparse', 
              userBwCov = 1.5, userBwMu= .3, 
              kernel='epan', verbose=FALSE, nRegGrid=50)
 pace.clean <- FPCA(Ly=X.clean$x, Lt=X.clean$pp, optns=myop.clean)
@@ -411,7 +411,7 @@ ours.r.tr <- efpca(X=X, ncpus=ncpus, hs.mu=hs.mu, hs.cov=hs.cov, rho.param=rho.p
                 k = k, s = k, trace=FALSE, seed=seed, k.cv=k.cv, ncov=ncov, max.kappa=max.kappa)
 ours.ls.tr <- lsfpca(X=X, ncpus=ncpus, hs.mu=hs.mu, hs.cov=hs.cov, rho.param=rho.param, 
                   k = k, s = k, trace=FALSE, seed=seed, k.cv=k.cv, ncov=ncov, max.kappa=max.kappa)
-myop <- list(error=TRUE, methodXi='CE', dataType='Sparse', 
+myop <- list(error=FALSE, methodXi='CE', dataType='Sparse', 
              userBwCov = 1.5, userBwMu= .3,
              kernel='epan', verbose=FALSE, nRegGrid=50)
 pace.tr <- FPCA(Ly=X$x, Lt=X$pp, optns=myop)
