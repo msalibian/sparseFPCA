@@ -11,8 +11,8 @@
 #' @name sparseFPCA
 NULL
 
-#' @import mgcv doParallel
+#' @import stats utils mgcv doParallel parallel foreach
 NULL
 
-#' @importFrom fda.usc rproc2fdata
-NULL
+# #' @importFrom fda.usc rproc2fdata
+# NULL

@@ -3,10 +3,10 @@ Title: Robust functional PCA for longitudinal data
 Version: 0.0.0.1
 Authors@R: c(person("Matias", "Salibian-Barrera", role = c("cre"), email = "matias@stat.ubc.ca"),
              person("Graciela", "Boente", role = "aut", email = "gboente@dm.uba.ar"))
-Description: Robust functional PCA for longitudinal data
+Description: This package implements a robust functional PCA method for longitudinal data, as proposed in Boente and Salibian-Barrera (2020).
 Depends: R (>= 3.5.0)
-Imports: stats, MASS, mgcv, doParallel
-License: License: GPL (>= 3)
+Imports: stats, utils, MASS, mgcv, parallel, doParallel, fda.usc, foreach, RobStatTM
+License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.1.1
