@@ -312,6 +312,33 @@ for(i in ii4) lines(X$pp[[i]], X$x[[i]], col='black', lwd=3, type='b', pch=19, c
 
 ![](README_files/figure-gfm/most.outlying-1.png)<!-- -->
 
+Note that these curves appear to either decrease too rapidly (with
+respect to the rest), or to remain at high values over time. In the
+following plot of all the outlying curves we note that they all show one
+of these two main patterns.
+
+``` r
+xmi <- min( tmp <- unlist(X$x) )
+xma <- max( tmp )
+ymi <- min( tmp <- unlist(X$pp) )
+yma <- max( tmp ) 
+ii <- 1:length(X$x)
+plot(seq(ymi, yma, length=5), seq(xmi, xma,length=5), type='n', 
+     xlab='t', ylab='X(t)')
+for(i in ii) { 
+  lines(X$pp[[i]], X$x[[i]], col='gray', lwd=1, type='b', pch=19, 
+        cex=1.2) 
+}
+cols <- rainbow(length(ous))
+for(i in 1:length(ous)) {
+  lines(X$pp[[ous[i]]], X$x[[ous[i]]], col=cols[i], lwd=3, type='b', 
+        pch=19, cex=1.2)
+}
+legend('topright', legend=ous, lty=1, lwd=2, col=cols, ncol=5, cex=0.8)
+```
+
+![](README_files/figure-gfm/alloutliers-1.png)<!-- -->
+
 ### Comparing fits on “cleaned” data
 
 We now remove the outliers and re-fit the non-robust estimators:
