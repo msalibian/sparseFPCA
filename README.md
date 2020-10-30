@@ -1,7 +1,7 @@
 Robust FPCA for sparsely observed curves
 ================
 Matias Salibian-Barrera & Graciela Boente
-2020-06-20
+2020-10-30
 
 This repository contains the `sparseFPCA` package that implements the
 robust FPCA method introduced in [Boente and
@@ -35,7 +35,7 @@ devtools::install_github('msalibian/sparseFPCA', ref = "master")
 
 ## An example - CD4 counts data
 
-Below we illustrate the use of our method and compare it with existing
+Here we illustrate the use of our method and compare it with existing
 alternatives. We will analyze the CD4 data, which is available in the
 `catdata` package
 ([catdata](https://cran.r-project.org/package=catdata)). These data are
@@ -138,7 +138,11 @@ library(doParallel)
 library(fdapace)
 ```
 
-The following are parameters
+The specific versions of these packages that were used here (via the
+output of the function `sessionInfo()`) can be found at the bottom of
+this page.
+
+The following are parameters required for our estimator.
 
 ``` r
 ncpus <- 4
@@ -146,7 +150,7 @@ seed <- 123
 rho.param <- 1e-3 
 max.kappa <- 1e3
 ncov <- 50
-k.cv <- 5
+k.cv <- 10
 k <- 5
 s <- k 
 hs.mu <- seq(.1, 1.5, by=.1)
@@ -181,12 +185,12 @@ points(ours.ls$ma$mt[,1], ours.ls$ma$mt[,1], pch=19, col='gray70', cex=.8)
 The estimated covariance functions:
 
 ``` r
-ss <- tt <- ours.ls$ss
-G.ls <- ours.ls$cov.fun
-filled.contour(tt, ss, G.ls, main='LS')
 ss <- tt <- ours.r$ss
 G.r <- ours.r$cov.fun
 filled.contour(tt, ss, G.r, main='ROB')
+ss <- tt <- ours.ls$ss
+G.ls <- ours.ls$cov.fun
+filled.contour(tt, ss, G.ls, main='LS')
 ss <- tt <- pace$workGrid
 G.pace <- pace$smoothedCov
 filled.contour(tt, ss, G.pace, main='PACE')
@@ -197,14 +201,14 @@ filled.contour(tt, ss, G.pace, main='PACE')
 Another take:
 
 ``` r
-persp(ours.ls$tt, ours.ls$ss, G.ls, xlab="s", ylab="t", zlab=" ", 
-      zlim=c(10000, 130000), theta = -30, phi = 30, r = 50, 
-      col="gray90", ltheta = 120, shade = 0.15, ticktype="detailed", 
-      cex.axis=0.9, cex.lab=.9, main = 'LS')
 persp(ours.r$tt, ours.r$ss, G.r, xlab="s", ylab="t", zlab=" ",  
       zlim=c(10000, 130000), theta = -30, phi = 30, r = 50, 
       col="gray90", ltheta = 120, shade = 0.15, ticktype="detailed", 
       cex.axis=0.9, main = 'ROB')
+persp(ours.ls$tt, ours.ls$ss, G.ls, xlab="s", ylab="t", zlab=" ", 
+      zlim=c(10000, 130000), theta = -30, phi = 30, r = 50, 
+      col="gray90", ltheta = 120, shade = 0.15, ticktype="detailed", 
+      cex.axis=0.9, cex.lab=.9, main = 'LS')
 persp(pace$workGrid, pace$workGrid, G.pace, xlab="s", ylab="t", zlab=" ",  
       zlim=c(10000, 130000), theta = -30, phi = 30, r = 50, 
       col="gray90", ltheta = 120, shade = 0.15, ticktype="detailed", 
@@ -226,7 +230,7 @@ rbind(ours = cumsum(dd)[1:3] / sum(dd),
 ```
 
     ##           [,1]      [,2]      [,3]
-    ## ours 0.9463211 0.9979511 0.9994576
+    ## ours 0.9887100 0.9992138 0.9995593
     ## ls   0.9769791 0.9979702 0.9993578
     ## pace 0.8735757 0.9438932 0.9688466
 
@@ -303,7 +307,7 @@ title(main='Most outlying')
 for(i in ii) { lines(X$pp[[i]], X$x[[i]], col='gray', lwd=1, type='b', pch=19, 
                      cex=1.2) }
 ii4 <- order(dist.ous, decreasing=TRUE)[1:5]
-for(i in ii4) lines(X$pp[[i]], X$x[[i]], col='blue', lwd=3, type='b', pch=19, cex=1.2)
+for(i in ii4) lines(X$pp[[i]], X$x[[i]], col='black', lwd=3, type='b', pch=19, cex=1.2)
 ```
 
 ![](README_files/figure-gfm/most.outlying-1.png)<!-- -->
@@ -333,12 +337,12 @@ pace.clean <- FPCA(Ly=X.clean$x, Lt=X.clean$pp, optns=myop.clean)
 The estimated covariance functions:
 
 ``` r
-ss <- tt <- ours.ls.clean$ss
-G.ls.clean <- ours.ls.clean$cov.fun
-filled.contour(tt, ss, G.ls.clean, main='LS - Clean')
 ss <- tt <- ours.r$ss
 G.r <- ours.r$cov.fun
 filled.contour(tt, ss, G.r, main='ROB')
+ss <- tt <- ours.ls.clean$ss
+G.ls.clean <- ours.ls.clean$cov.fun
+filled.contour(tt, ss, G.ls.clean, main='LS - Clean')
 ss <- tt <- pace.clean$workGrid
 G.pace.clean <- pace.clean$smoothedCov
 filled.contour(tt, ss, G.pace.clean, main='PACE - Clean')
@@ -349,15 +353,15 @@ filled.contour(tt, ss, G.pace.clean, main='PACE - Clean')
 And:
 
 ``` r
+persp(ours.r$ss, ours.r$ss, G.r, xlab="s", ylab="t", zlab=" ",  
+      zlim=c(10000, 65000), theta = -30, phi = 30, r = 50, col="gray90",
+      ltheta = 120, shade = 0.15, ticktype="detailed", cex.axis=0.9, main ='ROB')
 persp(ours.ls.clean$ss, ours.ls.clean$ss, G.ls.clean, xlab="s", ylab="t", zlab=" ", 
-      zlim=c(10000, 130000), theta = -30, phi = 30, r = 50, col="gray90",
+      zlim=c(10000, 65000), theta = -30, phi = 30, r = 50, col="gray90",
       ltheta = 120, shade = 0.15, ticktype="detailed", cex.axis=0.9,
       main = 'LS - Clean')
-persp(ours.r$ss, ours.r$ss, G.r, xlab="s", ylab="t", zlab=" ",  
-      zlim=c(10000, 130000), theta = -30, phi = 30, r = 50, col="gray90",
-      ltheta = 120, shade = 0.15, ticktype="detailed", cex.axis=0.9, main ='ROB')
 persp(pace.clean$workGrid, pace.clean$workGrid, G.pace.clean, xlab="s", ylab="t", 
-      zlab=" ", zlim=c(10000, 130000), theta = -30, phi = 30, r = 50, 
+      zlab=" ", zlim=c(10000, 65000), theta = -30, phi = 30, r = 50, 
       col="gray90", ltheta = 120, shade = 0.15, ticktype="detailed", cex.axis=0.9, 
       main = 'PACE - Clean')
 ```
@@ -468,7 +472,7 @@ seed <- 123
 rho.param <- 1e-3 
 max.kappa <- 1e3
 ncov <- 50
-k.cv <- 5
+k.cv <- 10
 k <- 5
 s <- k
 hs.cov <- seq(1, 7, length=10)
@@ -487,8 +491,10 @@ Next, using these estimated mean and covariance functions we construct
 predicted curves for the patients in the test set:
 
 ``` r
+# pr2.pace <- predict(pace.tr, newLy = X.test$x, newLt=X.test$pp, K = ncol(pace.tr$xiEst), xiMethod='CE')
+# pp.pace <- pace.tr$phi %*% t(pr2.pace) 
 pr2.pace <- predict(pace.tr, newLy = X.test$x, newLt=X.test$pp, K = ncol(pace.tr$xiEst), xiMethod='CE')
-pp.pace <- pace.tr$phi %*% t(pr2.pace) 
+pp.pace <- pace.tr$phi %*% t(pr2.pace$scores) 
 
 tts <- unlist(X$pp)
 mus <- unlist(ours.ls.tr$muh)
@@ -520,7 +526,7 @@ xma <- max( tmp )
 ymi <- min( tmp <- unlist(X$pp) )
 yma <- max( tmp ) 
 ii2 <- 1:length(X$x)
-show.these <- c(4, 46, 34, 44)
+show.these <- c(4, 44, 46, 34)
 for(j in show.these) {
   plot(seq(ymi, yma, length=5), seq(xmi, xma,length=5), type='n', xlab='t', ylab='X(t)')
   lines(X.test$pp[[j]], X.test$x[[j]], col='gray50', lwd=5, type='b', pch=19, cex=2)
@@ -532,3 +538,71 @@ for(j in show.these) {
 ```
 
 <img src="README_files/figure-gfm/show.predictions-1.png" width="50%" /><img src="README_files/figure-gfm/show.predictions-2.png" width="50%" /><img src="README_files/figure-gfm/show.predictions-3.png" width="50%" /><img src="README_files/figure-gfm/show.predictions-4.png" width="50%" />
+
+### Technical specs of the above analysis
+
+``` r
+version
+```
+
+    ##                _                           
+    ## platform       x86_64-w64-mingw32          
+    ## arch           x86_64                      
+    ## os             mingw32                     
+    ## system         x86_64, mingw32             
+    ## status                                     
+    ## major          3                           
+    ## minor          6.3                         
+    ## year           2020                        
+    ## month          02                          
+    ## day            29                          
+    ## svn rev        77875                       
+    ## language       R                           
+    ## version.string R version 3.6.3 (2020-02-29)
+    ## nickname       Holding the Windsock
+
+``` r
+sessionInfo()
+```
+
+    ## R version 3.6.3 (2020-02-29)
+    ## Platform: x86_64-w64-mingw32/x64 (64-bit)
+    ## Running under: Windows 10 x64 (build 18362)
+    ## 
+    ## Matrix products: default
+    ## 
+    ## locale:
+    ## [1] LC_COLLATE=English_Canada.1252  LC_CTYPE=English_Canada.1252   
+    ## [3] LC_MONETARY=English_Canada.1252 LC_NUMERIC=C                   
+    ## [5] LC_TIME=English_Canada.1252    
+    ## 
+    ## attached base packages:
+    ## [1] parallel  stats     graphics  grDevices utils     datasets  methods  
+    ## [8] base     
+    ## 
+    ## other attached packages:
+    ## [1] fdapace_0.5.5      doParallel_1.0.16  iterators_1.0.13  
+    ## [4] foreach_1.5.1      sparseFPCA_0.0.0.1
+    ## 
+    ## loaded via a namespace (and not attached):
+    ##  [1] tidyselect_0.2.5    xfun_0.8            purrr_0.3.2        
+    ##  [4] splines_3.6.3       lattice_0.20-38     colorspace_1.4-1   
+    ##  [7] vctrs_0.3.4         htmltools_0.5.0     RobStatTM_1.0.3    
+    ## [10] yaml_2.2.1          mgcv_1.8-31         base64enc_0.1-3    
+    ## [13] pracma_2.2.9        survival_3.1-8      rlang_0.4.8        
+    ## [16] pillar_1.4.6        foreign_0.8-75      glue_1.4.2         
+    ## [19] RColorBrewer_1.1-2  jpeg_0.1-8.1        lifecycle_0.2.0    
+    ## [22] stringr_1.4.0       munsell_0.5.0       gtable_0.3.0       
+    ## [25] htmlwidgets_1.5.2   codetools_0.2-16    evaluate_0.14      
+    ## [28] latticeExtra_0.6-29 knitr_1.23          htmlTable_1.13.3   
+    ## [31] Rcpp_1.0.5          acepack_1.4.1       backports_1.1.10   
+    ## [34] checkmate_2.0.0     scales_1.1.1        Hmisc_4.4-0        
+    ## [37] gridExtra_2.3       ggplot2_3.3.2       png_0.1-7          
+    ## [40] digest_0.6.27       stringi_1.4.6       dplyr_0.8.3        
+    ## [43] numDeriv_2016.8-1.1 grid_3.6.3          tools_3.6.3        
+    ## [46] magrittr_1.5        tibble_3.0.4        Formula_1.2-3      
+    ## [49] cluster_2.1.0       crayon_1.3.4        pkgconfig_2.0.3    
+    ## [52] MASS_7.3-51.5       ellipsis_0.3.1      Matrix_1.2-18      
+    ## [55] data.table_1.12.6   rstudioapi_0.11     assertthat_0.2.1   
+    ## [58] rmarkdown_2.3       R6_2.4.1            rpart_4.1-15       
+    ## [61] nnet_7.3-12         nlme_3.1-144        compiler_3.6.3

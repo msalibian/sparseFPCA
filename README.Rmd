@@ -37,7 +37,7 @@ devtools::install_github('msalibian/sparseFPCA', ref = "master")
 
 ## An example - CD4 counts data
 
-Below we illustrate the use of our method and compare it
+Here we illustrate the use of our method and compare it
 with existing alternatives. We will analyze the 
 CD4 data, which is available in the
 `catdata` package ([catdata](https://cran.r-project.org/package=catdata)). 
@@ -117,14 +117,18 @@ library(sparseFPCA)
 library(doParallel)
 library(fdapace)
 ```
-The following are parameters
+The specific versions of these packages that were used here
+(via the output of the function `sessionInfo()`) can be found 
+at the bottom of this page. 
+
+The following are parameters required for our estimator. 
 ```{r parameters}
 ncpus <- 4
 seed <- 123
 rho.param <- 1e-3 
 max.kappa <- 1e3
 ncov <- 50
-k.cv <- 5
+k.cv <- 10
 k <- 5
 s <- k 
 hs.mu <- seq(.1, 1.5, by=.1)
@@ -153,12 +157,12 @@ points(ours.ls$ma$mt[,1], ours.ls$ma$mt[,1], pch=19, col='gray70', cex=.8)
 
 The estimated covariance functions:
 ```{r covariances, fig.show="hold", out.width="33%"}
-ss <- tt <- ours.ls$ss
-G.ls <- ours.ls$cov.fun
-filled.contour(tt, ss, G.ls, main='LS')
 ss <- tt <- ours.r$ss
 G.r <- ours.r$cov.fun
 filled.contour(tt, ss, G.r, main='ROB')
+ss <- tt <- ours.ls$ss
+G.ls <- ours.ls$cov.fun
+filled.contour(tt, ss, G.ls, main='LS')
 ss <- tt <- pace$workGrid
 G.pace <- pace$smoothedCov
 filled.contour(tt, ss, G.pace, main='PACE')
@@ -166,14 +170,14 @@ filled.contour(tt, ss, G.pace, main='PACE')
 
 Another take:
 ```{r covariances.2, fig.show="hold", out.width="33%"}
-persp(ours.ls$tt, ours.ls$ss, G.ls, xlab="s", ylab="t", zlab=" ", 
-      zlim=c(10000, 130000), theta = -30, phi = 30, r = 50, 
-      col="gray90", ltheta = 120, shade = 0.15, ticktype="detailed", 
-      cex.axis=0.9, cex.lab=.9, main = 'LS')
 persp(ours.r$tt, ours.r$ss, G.r, xlab="s", ylab="t", zlab=" ",  
       zlim=c(10000, 130000), theta = -30, phi = 30, r = 50, 
       col="gray90", ltheta = 120, shade = 0.15, ticktype="detailed", 
       cex.axis=0.9, main = 'ROB')
+persp(ours.ls$tt, ours.ls$ss, G.ls, xlab="s", ylab="t", zlab=" ", 
+      zlim=c(10000, 130000), theta = -30, phi = 30, r = 50, 
+      col="gray90", ltheta = 120, shade = 0.15, ticktype="detailed", 
+      cex.axis=0.9, cex.lab=.9, main = 'LS')
 persp(pace$workGrid, pace$workGrid, G.pace, xlab="s", ylab="t", zlab=" ",  
       zlim=c(10000, 130000), theta = -30, phi = 30, r = 50, 
       col="gray90", ltheta = 120, shade = 0.15, ticktype="detailed", 
@@ -253,7 +257,7 @@ title(main='Most outlying')
 for(i in ii) { lines(X$pp[[i]], X$x[[i]], col='gray', lwd=1, type='b', pch=19, 
                      cex=1.2) }
 ii4 <- order(dist.ous, decreasing=TRUE)[1:5]
-for(i in ii4) lines(X$pp[[i]], X$x[[i]], col='blue', lwd=3, type='b', pch=19, cex=1.2)
+for(i in ii4) lines(X$pp[[i]], X$x[[i]], col='black', lwd=3, type='b', pch=19, cex=1.2)
 ```
 
 ### Comparing fits on "cleaned" data
@@ -276,12 +280,12 @@ pace.clean <- FPCA(Ly=X.clean$x, Lt=X.clean$pp, optns=myop.clean)
 ```
 The estimated covariance functions:
 ```{r clean.covariances, fig.show="hold", out.width="33%"}
-ss <- tt <- ours.ls.clean$ss
-G.ls.clean <- ours.ls.clean$cov.fun
-filled.contour(tt, ss, G.ls.clean, main='LS - Clean')
 ss <- tt <- ours.r$ss
 G.r <- ours.r$cov.fun
 filled.contour(tt, ss, G.r, main='ROB')
+ss <- tt <- ours.ls.clean$ss
+G.ls.clean <- ours.ls.clean$cov.fun
+filled.contour(tt, ss, G.ls.clean, main='LS - Clean')
 ss <- tt <- pace.clean$workGrid
 G.pace.clean <- pace.clean$smoothedCov
 filled.contour(tt, ss, G.pace.clean, main='PACE - Clean')
@@ -289,15 +293,15 @@ filled.contour(tt, ss, G.pace.clean, main='PACE - Clean')
 
 And:
 ```{r clean.covariances.2, fig.show="hold", out.width="33%"}
+persp(ours.r$ss, ours.r$ss, G.r, xlab="s", ylab="t", zlab=" ",  
+      zlim=c(10000, 65000), theta = -30, phi = 30, r = 50, col="gray90",
+      ltheta = 120, shade = 0.15, ticktype="detailed", cex.axis=0.9, main ='ROB')
 persp(ours.ls.clean$ss, ours.ls.clean$ss, G.ls.clean, xlab="s", ylab="t", zlab=" ", 
-      zlim=c(10000, 130000), theta = -30, phi = 30, r = 50, col="gray90",
+      zlim=c(10000, 65000), theta = -30, phi = 30, r = 50, col="gray90",
       ltheta = 120, shade = 0.15, ticktype="detailed", cex.axis=0.9,
       main = 'LS - Clean')
-persp(ours.r$ss, ours.r$ss, G.r, xlab="s", ylab="t", zlab=" ",  
-      zlim=c(10000, 130000), theta = -30, phi = 30, r = 50, col="gray90",
-      ltheta = 120, shade = 0.15, ticktype="detailed", cex.axis=0.9, main ='ROB')
 persp(pace.clean$workGrid, pace.clean$workGrid, G.pace.clean, xlab="s", ylab="t", 
-      zlab=" ", zlim=c(10000, 130000), theta = -30, phi = 30, r = 50, 
+      zlab=" ", zlim=c(10000, 65000), theta = -30, phi = 30, r = 50, 
       col="gray90", ltheta = 120, shade = 0.15, ticktype="detailed", cex.axis=0.9, 
       main = 'PACE - Clean')
 ```
@@ -402,7 +406,7 @@ seed <- 123
 rho.param <- 1e-3 
 max.kappa <- 1e3
 ncov <- 50
-k.cv <- 5
+k.cv <- 10
 k <- 5
 s <- k
 hs.cov <- seq(1, 7, length=10)
@@ -419,8 +423,10 @@ pace.tr <- FPCA(Ly=X$x, Lt=X$pp, optns=myop)
 Next, using these estimated mean and covariance functions we construct
 predicted curves for the patients in the test set:
 ```{r build.predictions}
+# pr2.pace <- predict(pace.tr, newLy = X.test$x, newLt=X.test$pp, K = ncol(pace.tr$xiEst), xiMethod='CE')
+# pp.pace <- pace.tr$phi %*% t(pr2.pace) 
 pr2.pace <- predict(pace.tr, newLy = X.test$x, newLt=X.test$pp, K = ncol(pace.tr$xiEst), xiMethod='CE')
-pp.pace <- pace.tr$phi %*% t(pr2.pace) 
+pp.pace <- pace.tr$phi %*% t(pr2.pace$scores) 
 
 tts <- unlist(X$pp)
 mus <- unlist(ours.ls.tr$muh)
@@ -450,7 +456,7 @@ xma <- max( tmp )
 ymi <- min( tmp <- unlist(X$pp) )
 yma <- max( tmp ) 
 ii2 <- 1:length(X$x)
-show.these <- c(4, 46, 34, 44)
+show.these <- c(4, 44, 46, 34)
 for(j in show.these) {
   plot(seq(ymi, yma, length=5), seq(xmi, xma,length=5), type='n', xlab='t', ylab='X(t)')
   lines(X.test$pp[[j]], X.test$x[[j]], col='gray50', lwd=5, type='b', pch=19, cex=2)
@@ -459,4 +465,12 @@ for(j in show.these) {
   lines(ours.r.tr$tt, pred.test.r[[j]], lwd=3, lty=1)
   legend('topright', legend=c('Robust (ROB)', 'Non-robust (LS)', 'PACE'), lwd=2, lty=1:3)
 }
+```
+
+### Technical specs of the above analysis
+```{r version}
+version
+```
+```{r session}
+sessionInfo()
 ```
