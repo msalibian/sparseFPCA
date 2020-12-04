@@ -10,8 +10,10 @@ knitr::opts_chunk$set(echo = TRUE, fig.width=5, fig.height=5, message=FALSE, war
 ```
 
 This repository contains the `sparseFPCA` package that implements the 
-robust FPCA method introduced in [Boente and Salibian-Barrera, 2020](https://github.com/msalibian/sparseFPCA).
-
+robust FPCA method introduced in [Robust functional principal 
+components for sparse longitudinal 
+data](https://arxiv.org/abs/2012.01540) (Boente and Salibian-Barrera, in
+press). 
 
 **LICENSE**: The content in this repository is  released under the 
 "Creative Commons Attribution-ShareAlike 4.0 International" license. 

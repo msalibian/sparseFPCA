@@ -1,11 +1,12 @@
 Robust FPCA for sparsely observed curves
 ================
 Matias Salibian-Barrera & Graciela Boente
-2020-10-30
+2020-12-04
 
 This repository contains the `sparseFPCA` package that implements the
-robust FPCA method introduced in [Boente and
-Salibian-Barrera, 2020](https://github.com/msalibian/sparseFPCA).
+robust FPCA method introduced in [Robust functional principal components
+for sparse longitudinal data](https://arxiv.org/abs/2012.01540) (Boente
+and Salibian-Barrera, in press).
 
 **LICENSE**: The content in this repository is released under the
 “Creative Commons Attribution-ShareAlike 4.0 International” license.
@@ -594,7 +595,7 @@ sessionInfo()
 
     ## R version 3.6.3 (2020-02-29)
     ## Platform: x86_64-w64-mingw32/x64 (64-bit)
-    ## Running under: Windows 10 x64 (build 18362)
+    ## Running under: Windows 10 x64 (build 18363)
     ## 
     ## Matrix products: default
     ## 
@@ -608,28 +609,28 @@ sessionInfo()
     ## [8] base     
     ## 
     ## other attached packages:
-    ## [1] fdapace_0.5.5      doParallel_1.0.16  iterators_1.0.13  
-    ## [4] foreach_1.5.1      sparseFPCA_0.0.0.1
+    ## [1] fdapace_0.5.5      doParallel_1.0.16  iterators_1.0.13   foreach_1.5.1     
+    ## [5] sparseFPCA_0.0.0.1
     ## 
     ## loaded via a namespace (and not attached):
-    ##  [1] tidyselect_0.2.5    xfun_0.8            purrr_0.3.2        
-    ##  [4] splines_3.6.3       lattice_0.20-38     colorspace_1.4-1   
-    ##  [7] vctrs_0.3.4         htmltools_0.5.0     RobStatTM_1.0.3    
-    ## [10] yaml_2.2.1          mgcv_1.8-31         base64enc_0.1-3    
-    ## [13] pracma_2.2.9        survival_3.1-8      rlang_0.4.8        
-    ## [16] pillar_1.4.6        foreign_0.8-75      glue_1.4.2         
-    ## [19] RColorBrewer_1.1-2  jpeg_0.1-8.1        lifecycle_0.2.0    
-    ## [22] stringr_1.4.0       munsell_0.5.0       gtable_0.3.0       
-    ## [25] htmlwidgets_1.5.2   codetools_0.2-16    evaluate_0.14      
-    ## [28] latticeExtra_0.6-29 knitr_1.23          htmlTable_1.13.3   
-    ## [31] Rcpp_1.0.5          acepack_1.4.1       backports_1.1.10   
-    ## [34] checkmate_2.0.0     scales_1.1.1        Hmisc_4.4-0        
+    ##  [1] tidyselect_1.1.0    xfun_0.19           purrr_0.3.4        
+    ##  [4] splines_3.6.3       lattice_0.20-41     colorspace_1.4-1   
+    ##  [7] vctrs_0.3.4         generics_0.1.0      htmltools_0.5.0    
+    ## [10] RobStatTM_1.0.3     yaml_2.2.1          mgcv_1.8-33        
+    ## [13] base64enc_0.1-3     pracma_2.2.9        survival_3.2-7     
+    ## [16] rlang_0.4.8         pillar_1.4.6        foreign_0.8-75     
+    ## [19] glue_1.4.2          RColorBrewer_1.1-2  jpeg_0.1-8.1       
+    ## [22] lifecycle_0.2.0     stringr_1.4.0       munsell_0.5.0      
+    ## [25] gtable_0.3.0        htmlwidgets_1.5.2   codetools_0.2-18   
+    ## [28] evaluate_0.14       latticeExtra_0.6-29 knitr_1.30         
+    ## [31] htmlTable_2.1.0     Rcpp_1.0.5          backports_1.2.0    
+    ## [34] checkmate_2.0.0     scales_1.1.1        Hmisc_4.4-1        
     ## [37] gridExtra_2.3       ggplot2_3.3.2       png_0.1-7          
-    ## [40] digest_0.6.27       stringi_1.4.6       dplyr_0.8.3        
+    ## [40] digest_0.6.27       stringi_1.5.3       dplyr_1.0.2        
     ## [43] numDeriv_2016.8-1.1 grid_3.6.3          tools_3.6.3        
-    ## [46] magrittr_1.5        tibble_3.0.4        Formula_1.2-3      
+    ## [46] magrittr_1.5        tibble_3.0.4        Formula_1.2-4      
     ## [49] cluster_2.1.0       crayon_1.3.4        pkgconfig_2.0.3    
-    ## [52] MASS_7.3-51.5       ellipsis_0.3.1      Matrix_1.2-18      
-    ## [55] data.table_1.12.6   rstudioapi_0.11     assertthat_0.2.1   
-    ## [58] rmarkdown_2.3       R6_2.4.1            rpart_4.1-15       
-    ## [61] nnet_7.3-12         nlme_3.1-144        compiler_3.6.3
+    ## [52] MASS_7.3-53         ellipsis_0.3.1      Matrix_1.2-18      
+    ## [55] data.table_1.13.2   rstudioapi_0.11     rmarkdown_2.5      
+    ## [58] R6_2.5.0            rpart_4.1-15        nnet_7.3-14        
+    ## [61] nlme_3.1-150        compiler_3.6.3
