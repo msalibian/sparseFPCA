@@ -1147,12 +1147,12 @@ pred <- function(X, muh, cov.fun, tt, ss, k=2, s=20, rho=0) {
   # (if s < length(Y), then Sigma_Y will be singular)
   # rho = regularization parameter
   # compute eigenfunctions
-  # eg <- eigen(cov.fun)
-  # lam <- eg$values[1:max(k,s)]
-  # ef <- eg$vectors[,1:max(k,s)]
-  eg <- svd(cov.fun)
-  lam <- eg$d[1:max(k,s)]
-  ef <- eg$u[,1:max(k,s)]
+  eg <- eigen(cov.fun)
+  lam <- eg$values[1:max(k,s)]
+  ef <- eg$vectors[,1:max(k,s)]
+  # eg <- svd(cov.fun)
+  # lam <- eg$d[1:max(k,s)]
+  # ef <- eg$u[,1:max(k,s)]
   lam[ lam < 0 ] <- 0 # drop negative eigenvalues
   # keep eigenfunctions with "positive" eigenvalues
   s1 <- max( (1:max(k,s))[ lam > 1e-5 ] )
@@ -1726,12 +1726,12 @@ pred.cv <- function(X, muh, X.pred, muh.pred, cov.fun, tt, k=2, s=20, rho=0) {
   # X.pred: test set
   # muh.pred: estimated mean for test set
 
-  # eg <- eigen(cov.fun)
-  # lam <- eg$values[1:max(k,s)]
-  # ef <- eg$vectors[,1:max(k,s)]
-  eg <- svd(cov.fun)
-  lam <- eg$d[1:max(k,s)]
-  ef <- eg$u[,1:max(k,s)]
+  eg <- eigen(cov.fun)
+  lam <- eg$values[1:max(k,s)]
+  ef <- eg$vectors[,1:max(k,s)]
+  # eg <- svd(cov.fun)
+  # lam <- eg$d[1:max(k,s)]
+  # ef <- eg$u[,1:max(k,s)]
   lam[ lam < 0 ] <- 0
   s1 <- max( (1:max(k,s))[ lam > 1e-5 ] )
   normas <- apply(ef, 2, L2.norma.mesh, mesh=tt) # rep(1, max(k,s))
@@ -1769,12 +1769,12 @@ pred.cv.whole <- function(X, muh, X.pred, muh.pred, cov.fun, tt, k=2, s=20, rho=
   # muh: estimated mean for training set on tt
   # X.pred: test set
   # muh.pred: estimated mean for test set
-  # eg <- eigen(cov.fun)
-  # lam <- eg$values[1:max(k,s)]
-  # ef <- eg$vectors[,1:max(k,s)]
-  eg <- svd(cov.fun)
-  lam <- eg$d[1:max(k,s)]
-  ef <- eg$u[,1:max(k,s)]
+  eg <- eigen(cov.fun)
+  lam <- eg$values[1:max(k,s)]
+  ef <- eg$vectors[,1:max(k,s)]
+  # eg <- svd(cov.fun)
+  # lam <- eg$d[1:max(k,s)]
+  # ef <- eg$u[,1:max(k,s)]
   lam[ lam < 0 ] <- 0
   s1 <- max( (1:max(k,s))[ lam > 1e-5 ] )
   normas <- apply(ef, 2, L2.norma.mesh, mesh=tt) # rep(1, max(k,s))
@@ -1815,12 +1815,12 @@ pred.scores <- function(X, muh, X.pred, muh.pred, cov.fun, tt, k=2, s=20, rho=0)
   # X.pred: test set
   # muh.pred: estimated mean for test set
 
-  # eg <- eigen(cov.fun)
-  # lam <- eg$values[1:max(k,s)]
-  # ef <- eg$vectors[,1:max(k,s)]
-  eg <- svd(cov.fun)
-  lam <- eg$d[1:max(k,s)]
-  ef <- eg$u[,1:max(k,s)]
+  eg <- eigen(cov.fun)
+  lam <- eg$values[1:max(k,s)]
+  ef <- eg$vectors[,1:max(k,s)]
+  # eg <- svd(cov.fun)
+  # lam <- eg$d[1:max(k,s)]
+  # ef <- eg$u[,1:max(k,s)]
   lam[ lam < 0 ] <- 0
   s1 <- max( (1:max(k,s))[ lam > 1e-5 ] )
   normas <- apply(ef, 2, L2.norma.mesh, mesh=tt) # rep(1, max(k,s))
@@ -2157,7 +2157,8 @@ efpca <- function(X, ncpus=4, opt.h.mu, opt.h.cov, hs.mu=seq(10, 25, by=1), hs.c
   # rho.param <- sigma2.2
 
   # select rho with condition number
-  la1 <- svd(ours$cov.fun2$G)$d[1]
+  # la1 <- svd(ours$cov.fun2$G)$d[1]
+  la1 <- eigen(ours$cov.fun2$G)$values[1]
   # rho.param <- uniroot(function(rho, la1, max.kappa) return( (la1+rho)/rho - max.kappa ), la1=la1,
   #                      max.kappa = max.kappa, interval=c(1e-15, 1e15))$root
   rho.param <- la1/(max.kappa-1)

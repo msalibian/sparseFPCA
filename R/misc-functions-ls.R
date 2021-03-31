@@ -361,7 +361,8 @@ lsfpca <- function(X, ncpus=4, opt.h.mu, opt.h.cov, hs.mu=seq(10, 25, by=1), hs.
   # rho.param <- sigma2.2
 
   # select rho with condition number
-  la1 <- svd(ours$cov.fun2$G)$d[1]
+  # la1 <- svd(ours$cov.fun2$G)$d[1]
+  la1 <- eigen(ours$cov.fun2$G)$values[1]
   # rho.param <- uniroot(function(rho, la1, max.kappa) return( (la1+rho)/rho - max.kappa ), la1=la1,
   #                      max.kappa = max.kappa, interval=c(1e-15, 1e15))$root
   rho.param <- la1/(max.kappa-1)
