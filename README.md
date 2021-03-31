@@ -1,7 +1,7 @@
 Robust FPCA for sparsely observed curves
 ================
 Matias Salibian-Barrera & Graciela Boente
-2020-12-04
+2021-03-31
 
 This repository contains the `sparseFPCA` package that implements the
 robust FPCA method introduced in [Robust functional principal components
@@ -9,8 +9,8 @@ for sparse longitudinal data](https://arxiv.org/abs/2012.01540) (Boente
 and Salibian-Barrera, in press).
 
 **LICENSE**: The content in this repository is released under the
-“Creative Commons Attribution-ShareAlike 4.0 International” license.
-See the **human-readable version**
+“Creative Commons Attribution-ShareAlike 4.0 International” license. See
+the **human-readable version**
 [here](https://creativecommons.org/licenses/by-sa/4.0/) and the **real
 thing**
 [here](https://creativecommons.org/licenses/by-sa/4.0/legalcode).
@@ -40,8 +40,8 @@ Here we illustrate the use of our method and compare it with existing
 alternatives. We will analyze the CD4 data, which is available in the
 `catdata` package
 ([catdata](https://cran.r-project.org/package=catdata)). These data are
-part of the Multicentre AIDS Cohort Study ([Zeger and
-Diggle, 1994](https://doi.org/10.2307/2532783)). They consist of 2376
+part of the Multicentre AIDS Cohort Study ([Zeger and Diggle,
+1994](https://doi.org/10.2307/2532783)). They consist of 2376
 measurements of CD4 cell counts, taken on 369 men. The times are
 measured in years since seroconversion (`t = 0`).
 
@@ -222,18 +222,18 @@ The “proportion of variance” explained by the first few principal
 directions are:
 
 ``` r
-dd <- svd(ours.r$cov.fun)$d
-ddls <- svd(ours.ls$cov.fun)$d
-ddp <- svd(pace$smoothedCov)$d
-rbind(ours = cumsum(dd)[1:3] / sum(dd), 
-      ls = cumsum(ddls)[1:3] / sum(ddls), 
-      pace = cumsum(ddp)[1:3] / sum(ddp))
+dd <- eigen(ours.r$cov.fun)$values
+ddls <- eigen(ours.ls$cov.fun)$values
+ddp <- eigen(pace$smoothedCov)$values
+rbind(ours = cumsum(dd)[1:3] / sum(dd[dd > 0]), 
+      ls = cumsum(ddls)[1:3] / sum(ddls[ddls > 0]), 
+      pace = cumsum(ddp)[1:3] / sum(ddp[ddp > 0]))
 ```
 
     ##           [,1]      [,2]      [,3]
-    ## ours 0.9887100 0.9992138 0.9995593
-    ## ls   0.9769791 0.9979702 0.9993578
-    ## pace 0.8735757 0.9438932 0.9688466
+    ## ours 0.9467379 0.9983907 0.9998978
+    ## ls   0.9524343 0.9894052 0.9994967
+    ## pace 0.8774258 0.9480532 0.9731165
 
 In what follows we will use 2 principal components. The corresponding
 estimated scores are:
@@ -254,11 +254,11 @@ We now compare the first two eigenfunctions.
 
 ``` r
 G2 <- ours.r$cov.fun
-G2.svd <- svd(G2)$u
+G2.svd <- eigen(G2)$vectors
 G.pace <- pace$smoothedCov
-Gpace.svd <- svd(G.pace)$u
+Gpace.svd <- eigen(G.pace)$vectors
 G2.ls <- ours.ls$cov.fun
-G2.ls.svd <- svd(G2.ls)$u
+G2.ls.svd <- eigen(G2.ls)$vectors
 ma <- -(mi <- -0.5) # y-axis limits
 for(j in 1:2) {
   phihat <- G2.svd[,j]
@@ -400,11 +400,11 @@ We can also compare the eigenfunctions:
 
 ``` r
 G2 <- ours.r$cov.fun
-G2.svd <- svd(G2)$u
+G2.svd <- eigen(G2)$vectors
 G.pace.clean <- pace.clean$smoothedCov 
-Gpace.svd.clean <- svd(G.pace.clean)$u
+Gpace.svd.clean <- eigen(G.pace.clean)$vectors
 G2.ls.clean <- ours.ls.clean$cov.fun
-G2.ls.svd.clean <- svd(G2.ls.clean)$u
+G2.ls.svd.clean <- eigen(G2.ls.clean)$vectors
 ma <- -(mi <- -0.5)
 for(j in 1:2) {
   phihat <- G2.svd[,j]
@@ -595,7 +595,7 @@ sessionInfo()
 
     ## R version 3.6.3 (2020-02-29)
     ## Platform: x86_64-w64-mingw32/x64 (64-bit)
-    ## Running under: Windows 10 x64 (build 18363)
+    ## Running under: Windows 10 x64 (build 19042)
     ## 
     ## Matrix products: default
     ## 
@@ -613,24 +613,25 @@ sessionInfo()
     ## [5] sparseFPCA_0.0.0.1
     ## 
     ## loaded via a namespace (and not attached):
-    ##  [1] tidyselect_1.1.0    xfun_0.19           purrr_0.3.4        
-    ##  [4] splines_3.6.3       lattice_0.20-41     colorspace_1.4-1   
-    ##  [7] vctrs_0.3.4         generics_0.1.0      htmltools_0.5.0    
-    ## [10] RobStatTM_1.0.3     yaml_2.2.1          mgcv_1.8-33        
-    ## [13] base64enc_0.1-3     pracma_2.2.9        survival_3.2-7     
-    ## [16] rlang_0.4.8         pillar_1.4.6        foreign_0.8-75     
-    ## [19] glue_1.4.2          RColorBrewer_1.1-2  jpeg_0.1-8.1       
-    ## [22] lifecycle_0.2.0     stringr_1.4.0       munsell_0.5.0      
-    ## [25] gtable_0.3.0        htmlwidgets_1.5.2   codetools_0.2-18   
-    ## [28] evaluate_0.14       latticeExtra_0.6-29 knitr_1.30         
-    ## [31] htmlTable_2.1.0     Rcpp_1.0.5          backports_1.2.0    
-    ## [34] checkmate_2.0.0     scales_1.1.1        Hmisc_4.4-1        
-    ## [37] gridExtra_2.3       ggplot2_3.3.2       png_0.1-7          
-    ## [40] digest_0.6.27       stringi_1.5.3       dplyr_1.0.2        
-    ## [43] numDeriv_2016.8-1.1 grid_3.6.3          tools_3.6.3        
-    ## [46] magrittr_1.5        tibble_3.0.4        Formula_1.2-4      
-    ## [49] cluster_2.1.0       crayon_1.3.4        pkgconfig_2.0.3    
-    ## [52] MASS_7.3-53         ellipsis_0.3.1      Matrix_1.2-18      
-    ## [55] data.table_1.13.2   rstudioapi_0.11     rmarkdown_2.5      
-    ## [58] R6_2.5.0            rpart_4.1-15        nnet_7.3-14        
-    ## [61] nlme_3.1-150        compiler_3.6.3
+    ##  [1] Rcpp_1.0.6          lattice_0.20-41     png_0.1-7          
+    ##  [4] assertthat_0.2.1    digest_0.6.27       utf8_1.2.1         
+    ##  [7] R6_2.5.0            backports_1.2.0     pracma_2.2.9       
+    ## [10] evaluate_0.14       ggplot2_3.3.3       pillar_1.5.1       
+    ## [13] rlang_0.4.10        rstudioapi_0.11     data.table_1.13.2  
+    ## [16] rpart_4.1-15        Matrix_1.2-18       checkmate_2.0.0    
+    ## [19] rmarkdown_2.5       splines_3.6.3       stringr_1.4.0      
+    ## [22] foreign_0.8-75      htmlwidgets_1.5.3   munsell_0.5.0      
+    ## [25] compiler_3.6.3      numDeriv_2016.8-1.1 xfun_0.19          
+    ## [28] pkgconfig_2.0.3     base64enc_0.1-3     mgcv_1.8-33        
+    ## [31] htmltools_0.5.1.1   nnet_7.3-14         tidyselect_1.1.0   
+    ## [34] tibble_3.1.0        gridExtra_2.3       htmlTable_2.1.0    
+    ## [37] Hmisc_4.4-1         codetools_0.2-18    fansi_0.4.2        
+    ## [40] crayon_1.4.1        dplyr_1.0.4         MASS_7.3-53        
+    ## [43] grid_3.6.3          nlme_3.1-150        gtable_0.3.0       
+    ## [46] lifecycle_1.0.0     DBI_1.1.0           magrittr_2.0.1     
+    ## [49] scales_1.1.1        RobStatTM_1.0.3     stringi_1.5.3      
+    ## [52] latticeExtra_0.6-29 ellipsis_0.3.1      generics_0.1.0     
+    ## [55] vctrs_0.3.7         Formula_1.2-4       RColorBrewer_1.1-2 
+    ## [58] tools_3.6.3         glue_1.4.2          purrr_0.3.4        
+    ## [61] jpeg_0.1-8.1        survival_3.2-7      yaml_2.2.1         
+    ## [64] colorspace_2.0-0    cluster_2.1.0       knitr_1.30
