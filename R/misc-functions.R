@@ -1540,7 +1540,8 @@ cv.mu.par <- function(X, k.cv=5, k = k.cv, hs=exp(seq(-4, 0, by=.6)), alpha=.4, 
       tmses <- NA } else {
         # tmp2 <- tmp2[ !is.na(tmp2) ]
         # if(length(tmp2) > 0) {
-        tmses <- RobStatTM::mscale(tmp2) #, delta=.3, tuning.chi=2.560841)
+        tmp3 <- RobStatTM::locScaleM(tmp2, psi='bisquare')
+        tmses <- tmp3$disper^2 + tmp3$mu^2 # RobStatTM::mscale(tmp2) #, delta=.3, tuning.chi=2.560841)
       }
 
   }
@@ -1605,7 +1606,8 @@ cov.fun.cv.par <- function(X, muh, ncov=50, k.cv=5, hs=exp(seq(-4, 0, by=.6)),
       tmspe <- NA } else {
     # tmp2 <- tmp2[ !is.na(tmp2) ]
     # if(length(tmp2) > 0) {
-      tmspe <- RobStatTM::mscale(tmp2) #, delta=.3, tuning.chi=2.560841)
+        tmp3 <- RobStatTM::locScaleM(tmp2, psi='bisquare')
+        tmspe <- tmp3$disper^2 + tmp3$mu^2  # RobStatTM::mscale(tmp2) #, delta=.3, tuning.chi=2.560841)
       }
     # } else {
     #   tmspe <- NA
@@ -1666,7 +1668,8 @@ cov.fun.cv <- function(X, muh, ncov=50, k.cv=5, hs=exp(seq(-4, 0, by=.6)),
       tmpse[j] <- NA } else {
     # tmp2 <- tmp2[ !is.na(tmp2) ]
     # if(length(tmp2) > 0) {
-    tmspe[j] <- RobStatTM::mscale(tmp2) #, delta=.3, tuning.chi=2.560841)
+        tmp3 <- RobStatTM::locScaleM(tmp2, psi='bisquare')
+        tmspe[j] <- tmp3$disper^2 + tmp3$mu^2 # RobStatTM::mscale(tmp2) #, delta=.3, tuning.chi=2.560841)
     }
   }
   if(exists('old.seed')) assign('.Random.seed', old.seed, envir=.GlobalEnv)
@@ -2045,7 +2048,8 @@ cov.fun.cv.res.par <- function(X, muh, ncov, k.cv, hs, seed=123) {
                                  # tmp <- sapply(mapply('-', X$x, Xhat), function(a) a^2) # squared residuals, list-wise
                                  if( any(is.na(re)) | (length(re)==0) ) {
                                    tmspe <- NA } else {
-                                     tmspe <- RobStatTM::mscale(re) #, delta=.3, tuning.chi=2.560841)
+                                     tmp3 <- RobStatTM::locScaleM(tmp2, psi='bisquare')
+                                     tmspe <- tmp3$disper^2 + tmp3$mu^2 # RobStatTM::mscale(re) #, delta=.3, tuning.chi=2.560841)
                                    }
                                }
   if(exists('old.seed')) assign('.Random.seed', old.seed, envir=.GlobalEnv)
