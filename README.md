@@ -1,7 +1,7 @@
 Robust FPCA for sparsely observed curves
 ================
 Matias Salibian-Barrera & Graciela Boente
-2021-03-31
+2021-05-17
 
 This repository contains the `sparseFPCA` package that implements the
 robust FPCA method introduced in [Robust functional principal components
@@ -579,21 +579,21 @@ version
     ## os             mingw32                     
     ## system         x86_64, mingw32             
     ## status                                     
-    ## major          3                           
-    ## minor          6.3                         
-    ## year           2020                        
-    ## month          02                          
-    ## day            29                          
-    ## svn rev        77875                       
+    ## major          4                           
+    ## minor          0.5                         
+    ## year           2021                        
+    ## month          03                          
+    ## day            31                          
+    ## svn rev        80133                       
     ## language       R                           
-    ## version.string R version 3.6.3 (2020-02-29)
-    ## nickname       Holding the Windsock
+    ## version.string R version 4.0.5 (2021-03-31)
+    ## nickname       Shake and Throw
 
 ``` r
 sessionInfo()
 ```
 
-    ## R version 3.6.3 (2020-02-29)
+    ## R version 4.0.5 (2021-03-31)
     ## Platform: x86_64-w64-mingw32/x64 (64-bit)
     ## Running under: Windows 10 x64 (build 19042)
     ## 
@@ -609,29 +609,28 @@ sessionInfo()
     ## [8] base     
     ## 
     ## other attached packages:
-    ## [1] fdapace_0.5.5      doParallel_1.0.16  iterators_1.0.13   foreach_1.5.1     
+    ## [1] fdapace_0.5.6      doParallel_1.0.16  iterators_1.0.13   foreach_1.5.1     
     ## [5] sparseFPCA_0.0.0.1
     ## 
     ## loaded via a namespace (and not attached):
-    ##  [1] Rcpp_1.0.6          lattice_0.20-41     png_0.1-7          
-    ##  [4] assertthat_0.2.1    digest_0.6.27       utf8_1.2.1         
-    ##  [7] R6_2.5.0            backports_1.2.0     pracma_2.2.9       
-    ## [10] evaluate_0.14       ggplot2_3.3.3       pillar_1.5.1       
-    ## [13] rlang_0.4.10        rstudioapi_0.11     data.table_1.13.2  
-    ## [16] rpart_4.1-15        Matrix_1.2-18       checkmate_2.0.0    
-    ## [19] rmarkdown_2.5       splines_3.6.3       stringr_1.4.0      
-    ## [22] foreign_0.8-75      htmlwidgets_1.5.3   munsell_0.5.0      
-    ## [25] compiler_3.6.3      numDeriv_2016.8-1.1 xfun_0.19          
-    ## [28] pkgconfig_2.0.3     base64enc_0.1-3     mgcv_1.8-33        
-    ## [31] htmltools_0.5.1.1   nnet_7.3-14         tidyselect_1.1.0   
-    ## [34] tibble_3.1.0        gridExtra_2.3       htmlTable_2.1.0    
-    ## [37] Hmisc_4.4-1         codetools_0.2-18    fansi_0.4.2        
-    ## [40] crayon_1.4.1        dplyr_1.0.4         MASS_7.3-53        
-    ## [43] grid_3.6.3          nlme_3.1-150        gtable_0.3.0       
-    ## [46] lifecycle_1.0.0     DBI_1.1.0           magrittr_2.0.1     
-    ## [49] scales_1.1.1        RobStatTM_1.0.3     stringi_1.5.3      
-    ## [52] latticeExtra_0.6-29 ellipsis_0.3.1      generics_0.1.0     
-    ## [55] vctrs_0.3.7         Formula_1.2-4       RColorBrewer_1.1-2 
-    ## [58] tools_3.6.3         glue_1.4.2          purrr_0.3.4        
-    ## [61] jpeg_0.1-8.1        survival_3.2-7      yaml_2.2.1         
-    ## [64] colorspace_2.0-0    cluster_2.1.0       knitr_1.30
+    ##  [1] xfun_0.22           splines_4.0.5       lattice_0.20-41    
+    ##  [4] colorspace_2.0-1    vctrs_0.3.8         htmltools_0.5.1.1  
+    ##  [7] RobStatTM_1.0.3     yaml_2.2.1          mgcv_1.8-35        
+    ## [10] base64enc_0.1-3     pracma_2.3.3        utf8_1.2.1         
+    ## [13] survival_3.2-11     rlang_0.4.11        pillar_1.6.1       
+    ## [16] foreign_0.8-81      glue_1.4.2          RColorBrewer_1.1-2 
+    ## [19] jpeg_0.1-8.1        lifecycle_1.0.0     stringr_1.4.0      
+    ## [22] munsell_0.5.0       gtable_0.3.0        htmlwidgets_1.5.3  
+    ## [25] codetools_0.2-18    evaluate_0.14       latticeExtra_0.6-29
+    ## [28] knitr_1.33          fansi_0.4.2         htmlTable_2.1.0    
+    ## [31] highr_0.9           Rcpp_1.0.6          scales_1.1.1       
+    ## [34] backports_1.2.1     checkmate_2.0.0     Hmisc_4.5-0        
+    ## [37] gridExtra_2.3       ggplot2_3.3.3       png_0.1-7          
+    ## [40] digest_0.6.27       stringi_1.5.3       numDeriv_2016.8-1.1
+    ## [43] grid_4.0.5          tools_4.0.5         magrittr_2.0.1     
+    ## [46] tibble_3.1.2        Formula_1.2-4       cluster_2.1.2      
+    ## [49] crayon_1.4.1        pkgconfig_2.0.3     MASS_7.3-53.1      
+    ## [52] ellipsis_0.3.2      Matrix_1.3-2        data.table_1.14.0  
+    ## [55] rstudioapi_0.13     rmarkdown_2.7       R6_2.5.0           
+    ## [58] rpart_4.1-15        nnet_7.3-15         nlme_3.1-152       
+    ## [61] compiler_4.0.5
