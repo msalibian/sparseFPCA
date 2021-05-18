@@ -224,7 +224,7 @@ matrixx <- function(X, mh) {
   M <- MT <- NULL
   for (i in 1:n){
     comb <- subsets(length(X$x[[i]]),2)
-    if(class(comb) != 'matrix') comb <- matrix(comb, byrow=TRUE, ncol=2)
+    if(class(comb)[1] != 'matrix') comb <- matrix(comb, byrow=TRUE, ncol=2)
     Maux <- matrix(X$x[[i]][comb]-mh[[i]][comb],ncol=2)
     MTaux <- matrix(X$pp[[i]][comb],ncol=2)
     M <- rbind(M, Maux, cbind(Maux[,2], Maux[,1]))
@@ -247,7 +247,7 @@ matrixx2 <- function(X, mh){
   M <- MT <- NULL
   for (i in 1:n){
     comb <- subsets(length(X$x[[i]]),2)
-    if(class(comb) != 'matrix') comb <- matrix(comb, byrow=TRUE, ncol=2)
+    if(class(comb)[1] != 'matrix') comb <- matrix(comb, byrow=TRUE, ncol=2)
     Maux <- matrix(X$x[[i]][comb]-mh[[i]][comb],ncol=2)
     MTaux <- matrix(X$pp[[i]][comb],ncol=2)
     M <- rbind(M, Maux, cbind(Maux[,2], Maux[,1]))
@@ -1959,7 +1959,7 @@ covresids.old <- function(X, mh, gam.fit) {
     re <- vector('numeric', 0) # sum(les))
     for (i in 1:n) {
       comb <- subsets(length(X$x[[i]]),2)
-      if(class(comb) != 'matrix') comb <- matrix(comb, byrow=TRUE, ncol=2)
+      if(class(comb)[1] != 'matrix') comb <- matrix(comb, byrow=TRUE, ncol=2)
       Maux <- matrix(X$x[[i]][comb]-mh[[i]][comb],ncol=2)
       MTaux <- matrix(X$pp[[i]][comb],ncol=2)
       M <- rbind(Maux, cbind(Maux[,2], Maux[,1]))
@@ -1982,7 +1982,7 @@ covresids <- function(X, mh, gam.fit) {
   M <- MT <- NULL
   for (i in 1:n) {
     comb <- subsets(length(X$x[[i]]),2)
-    if(class(comb) != 'matrix') comb <- matrix(comb, byrow=TRUE, ncol=2)
+    if(class(comb)[1] != 'matrix') comb <- matrix(comb, byrow=TRUE, ncol=2)
     Maux <- matrix(X$x[[i]][comb]-mh[[i]][comb],ncol=2)
     MTaux <- matrix(X$pp[[i]][comb],ncol=2)
     M <- rbind(M, Maux, cbind(Maux[,2], Maux[,1]))
@@ -2067,7 +2067,7 @@ covresids.new <- function(X, mh, h, seed=123) {
   re <- vector('numeric', 0)
   for (i in 1:n) {
     comb <- subsets(length(X$x[[i]]),2)
-    if(class(comb) != 'matrix') comb <- matrix(comb, byrow=TRUE, ncol=2)
+    if(class(comb)[1] != 'matrix') comb <- matrix(comb, byrow=TRUE, ncol=2)
     Maux <- matrix(X$x[[i]][comb]-mh[[i]][comb],ncol=2)
     MTaux <- matrix(X$pp[[i]][comb],ncol=2)
     sigmas <- betas <- rep(NA, nrow(Maux))
