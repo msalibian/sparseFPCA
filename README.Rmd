@@ -12,8 +12,8 @@ knitr::opts_chunk$set(echo = TRUE, fig.width=5, fig.height=5, message=FALSE, war
 This repository contains the `sparseFPCA` package that implements the 
 robust FPCA method introduced in [Robust functional principal 
 components for sparse longitudinal 
-data](https://arxiv.org/abs/2012.01540) (Boente and Salibian-Barrera, in
-press). 
+data](https://doi.org/10.1007/s40300-020-00193-3) (Boente and Salibian-Barrera, 2021)
+([ArXiv](https://arxiv.org/abs/2012.01540)).
 
 **LICENSE**: The content in this repository is  released under the 
 "Creative Commons Attribution-ShareAlike 4.0 International" license. 
@@ -22,7 +22,7 @@ and the **real thing** [here](https://creativecommons.org/licenses/by-sa/4.0/leg
 
 ##  sparseFPCA - Robust FPCA for sparsely observed curves
 
-The `sparseFPCA` package implements the robust functional principal components analysis (FPCA)  estimator introduced in [Boente and Salibian-Barrera, 2020](https://github.com/msalibian/sparseFPCA). `sparseFPCA` computes 
+The `sparseFPCA` package implements the robust functional principal components analysis (FPCA)  estimator introduced in [Boente and Salibian-Barrera, 2021](https://doi.org/10.1007/s40300-020-00193-3). `sparseFPCA` computes 
 robust estimators for the mean and covariance (scatter)
 functions, and the corresponding eigenfunctions. 
 It can be used with functional
