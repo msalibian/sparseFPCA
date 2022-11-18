@@ -4,10 +4,10 @@ Matias Salibian-Barrera & Graciela Boente
 2021-06-13
 
 This repository contains the `sparseFPCA` package that implements the
-robust FPCA method introduced in [Robust functional principal components
-for sparse longitudinal
-data](https://doi.org/10.1007/s40300-020-00193-3) (Boente and
-Salibian-Barrera, 2021) ([ArXiv](https://arxiv.org/abs/2012.01540)).
+robust FPCA method introduced in the paper
+> Boente, G and Salibian-Barrera, M. (2021) Robust functional principal components 
+> for sparse longitudinal data. METRON 79, 159–188 (2021). 
+> [DOI: 10.1007/s40300-020-00193-3](https://doi.org/10.1007/s40300-020-00193-3)
 
 **LICENSE**: The content in this repository is released under the
 “Creative Commons Attribution-ShareAlike 4.0 International” license. See
