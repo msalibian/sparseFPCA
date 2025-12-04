@@ -699,7 +699,7 @@ uhat.lin <- function(X, t0, h=0.1, cc=1.345, ep=1e-6, max.it=100){
     w[ is.nan(w) ] <- 1
     w <- w * wk
     beta.n <- solve( t( tt * w ) %*% tt, t(tt * w) %*% x )
-    if( any( is.na(beta.n) || is.nan(beta.n) ) ) return(NA)
+    if( any( is.na(beta.n) | is.nan(beta.n) ) ) return(NA)
     if( sum( (beta.n - beta)^2 ) < ep ) it = max.it
     beta <- beta.n
   }
@@ -1526,7 +1526,7 @@ cv.mu.par <- function(X, k.cv=5, k = k.cv, hs=exp(seq(-4, 0, by=.6)), alpha=.4, 
       xhats <- rep(NA, length(ps))
       for(l in 1:length(ps)) {
         tmp2 <- try(uhat.lin(X=Xtmp, t0=ps[l], h=h, cc=1.56, ep=1e-6, max.it=100), silent=TRUE)
-        if( class(tmp2) != 'try-error' )
+        if( !inherits(tmp2, "try-error") )
           xhats[l] <- tmp2
       }
       Xh[-this] <- relist(xhats, X$x[ -this ] ) # fill predictions
@@ -1536,8 +1536,9 @@ cv.mu.par <- function(X, k.cv=5, k = k.cv, hs=exp(seq(-4, 0, by=.6)), alpha=.4, 
     # # tmses <- tm(unlist(tmp), alpha=alpha) # 40% trimming, use 60% smallest resids
     # tmses <- RobStatTM::mscale(unlist(tmp)) #, delta=.3, tuning.chi=2.560841)
     tmp2 <- unlist(tmp)
-    if(any(is.na(tmp2))) {
+    if(all(is.na(tmp2))) {
       tmses <- NA } else {
+        tmp2 <- tmp2[ !is.na(tmp2) ]
         # tmp2 <- tmp2[ !is.na(tmp2) ]
         # if(length(tmp2) > 0) {
         tmp3 <- RobStatTM::locScaleM(tmp2, psi='bisquare')
@@ -1584,7 +1585,7 @@ cov.fun.cv.par <- function(X, muh, ncov=50, k.cv=5, hs=exp(seq(-4, 0, by=.6)),
       ma <- matrixx(Xtrain, muh[ this ])
       cov.fun <- try(cov.fun.hat2(X=Xtrain, h=h, mh=muh[ this ],
                       ma=ma, ncov=50, trace=FALSE)) # $G
-      if( class(cov.fun) != 'try-error') {
+      if( !inherits(cov.fun, 'try-error') ) {
         if(!any(is.na(cov.fun$G))) {
         uu <- as.vector(cov.fun$G) #
         ttx <- cov.fun$grid #
@@ -1593,7 +1594,7 @@ cov.fun.cv.par <- function(X, muh, ncov=50, k.cv=5, hs=exp(seq(-4, 0, by=.6)),
         tmp <- try( pred.cv(X=Xtrain, muh=muh[ this ], X.pred=Xtest,
                             muh.pred=muh[ -this ], cov.fun=cov.fun, tt=tt,
                             k=k, s=s, rho=reg.rho) )
-        if( class(tmp) != 'try-error') Xhat[ -this ] <- tmp
+        if( !inherits(tmp, 'try-error')) Xhat[ -this ] <- tmp
         }
       }
     }
@@ -1647,7 +1648,7 @@ cov.fun.cv <- function(X, muh, ncov=50, k.cv=5, hs=exp(seq(-4, 0, by=.6)),
       #                             ma=ma, ncov=50, trace=FALSE)$G)
       cov.fun <- try(cov.fun.hat2(X=Xtrain, h=hs[j], mh=muh[ this ],
                                   ma=ma, ncov=50, trace=FALSE))
-      if( (class(cov.fun) != 'try-error') ) {
+      if( !inherits(cov.fun, 'try-error') ) {
         if(!any(is.na(cov.fun$G))) {
         uu <- as.vector(cov.fun$G) #
         ttx <- cov.fun$grid #
@@ -1656,7 +1657,7 @@ cov.fun.cv <- function(X, muh, ncov=50, k.cv=5, hs=exp(seq(-4, 0, by=.6)),
         tmp <- try( pred.cv(X=Xtrain, muh=muh[ this ], X.pred=Xtest,
                             muh.pred=muh[ -this ], cov.fun=cov.fun, tt=tt,
                             k=k, s=s, rho=reg.rho) )
-        if( class(tmp) != 'try-error' ) Xhat[ -this ] <- tmp
+        if( !inherits(tmp, 'try-error') ) Xhat[ -this ] <- tmp
         }
       }
     }
@@ -2034,7 +2035,7 @@ cov.fun.cv.res.par <- function(X, muh, ncov, k.cv, hs, seed=123) {
                                    ma <- matrixx(Xtrain, muh[ this ])
                                    cov.fun <- try(cov.fun.hat2(X=Xtrain, h=h, mh=muh[ this ],
                                                                ma=ma, ncov=ncov, trace=FALSE)) # $G
-                                   if( class(cov.fun) != 'try-error') {
+                                   if( !inherits(cov.fun, 'try-error') ) {
                                      if(!any(is.na(cov.fun$G))) {
                                        uu <- as.vector(cov.fun$G) #
                                        ttx <- cov.fun$grid #
@@ -2108,7 +2109,7 @@ efpca <- function(X, ncpus=4, opt.h.mu, opt.h.cov, hs.mu=seq(10, 25, by=1), hs.c
 
   # Start cluster
   if( missing(opt.h.mu) || missing(opt.h.cov) ) {
-    cl <- makeCluster(ncpus) # stopCluster(cl)
+    cl <- makeCluster(ncpus) #, outfile="kk.txt") # stopCluster(cl)
     registerDoParallel(cl)
   }
   # run CV to find smoothing parameters for
