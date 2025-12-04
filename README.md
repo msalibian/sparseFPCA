@@ -1,13 +1,13 @@
 Robust FPCA for sparsely observed curves
 ================
 Matias Salibian-Barrera & Graciela Boente
-2021-06-13
+2025-12-04
 
 This repository contains the `sparseFPCA` package that implements the
-robust FPCA method introduced in the paper
-> Boente, G and Salibian-Barrera, M. (2021) Robust functional principal components 
-> for sparse longitudinal data. METRON 79, 159–188 (2021). 
-> [DOI: 10.1007/s40300-020-00193-3](https://doi.org/10.1007/s40300-020-00193-3)
+robust FPCA method introduced in [Robust functional principal components
+for sparse longitudinal
+data](https://doi.org/10.1007/s40300-020-00193-3) (Boente and
+Salibian-Barrera, 2021) ([ArXiv](https://arxiv.org/abs/2012.01540)).
 
 **LICENSE**: The content in this repository is released under the
 “Creative Commons Attribution-ShareAlike 4.0 International” license. See
@@ -574,64 +574,68 @@ for(j in show.these) {
 version
 ```
 
-    ##                _                           
-    ## platform       x86_64-w64-mingw32          
-    ## arch           x86_64                      
-    ## os             mingw32                     
-    ## system         x86_64, mingw32             
-    ## status                                     
-    ## major          4                           
-    ## minor          0.5                         
-    ## year           2021                        
-    ## month          03                          
-    ## day            31                          
-    ## svn rev        80133                       
-    ## language       R                           
-    ## version.string R version 4.0.5 (2021-03-31)
-    ## nickname       Shake and Throw
+    ##                _                                
+    ## platform       x86_64-w64-mingw32               
+    ## arch           x86_64                           
+    ## os             mingw32                          
+    ## crt            ucrt                             
+    ## system         x86_64, mingw32                  
+    ## status                                          
+    ## major          4                                
+    ## minor          5.1                              
+    ## year           2025                             
+    ## month          06                               
+    ## day            13                               
+    ## svn rev        88306                            
+    ## language       R                                
+    ## version.string R version 4.5.1 (2025-06-13 ucrt)
+    ## nickname       Great Square Root
 
 ``` r
 sessionInfo()
 ```
 
-    ## R version 4.0.5 (2021-03-31)
-    ## Platform: x86_64-w64-mingw32/x64 (64-bit)
-    ## Running under: Windows 10 x64 (build 19042)
+    ## R version 4.5.1 (2025-06-13 ucrt)
+    ## Platform: x86_64-w64-mingw32/x64
+    ## Running under: Windows 11 x64 (build 26200)
     ## 
     ## Matrix products: default
+    ##   LAPACK version 3.12.1
     ## 
     ## locale:
-    ## [1] LC_COLLATE=English_Canada.1252  LC_CTYPE=English_Canada.1252   
-    ## [3] LC_MONETARY=English_Canada.1252 LC_NUMERIC=C                   
-    ## [5] LC_TIME=English_Canada.1252    
+    ## [1] LC_COLLATE=English_Canada.utf8  LC_CTYPE=English_Canada.utf8   
+    ## [3] LC_MONETARY=English_Canada.utf8 LC_NUMERIC=C                   
+    ## [5] LC_TIME=English_Canada.utf8    
+    ## 
+    ## time zone: America/Vancouver
+    ## tzcode source: internal
     ## 
     ## attached base packages:
     ## [1] parallel  stats     graphics  grDevices utils     datasets  methods  
     ## [8] base     
     ## 
     ## other attached packages:
-    ## [1] fdapace_0.5.6      doParallel_1.0.16  iterators_1.0.13   foreach_1.5.1     
+    ## [1] fdapace_0.6.0      doParallel_1.0.17  iterators_1.0.14   foreach_1.5.2     
     ## [5] sparseFPCA_0.0.0.1
     ## 
     ## loaded via a namespace (and not attached):
-    ##  [1] xfun_0.22           splines_4.0.5       lattice_0.20-41    
-    ##  [4] colorspace_2.0-1    vctrs_0.3.8         htmltools_0.5.1.1  
-    ##  [7] RobStatTM_1.0.3     yaml_2.2.1          mgcv_1.8-35        
-    ## [10] base64enc_0.1-3     pracma_2.3.3        utf8_1.2.1         
-    ## [13] survival_3.2-11     rlang_0.4.11        pillar_1.6.1       
-    ## [16] foreign_0.8-81      glue_1.4.2          RColorBrewer_1.1-2 
-    ## [19] jpeg_0.1-8.1        lifecycle_1.0.0     stringr_1.4.0      
-    ## [22] munsell_0.5.0       gtable_0.3.0        htmlwidgets_1.5.3  
-    ## [25] codetools_0.2-18    evaluate_0.14       latticeExtra_0.6-29
-    ## [28] knitr_1.33          fansi_0.4.2         htmlTable_2.1.0    
-    ## [31] highr_0.9           Rcpp_1.0.6          scales_1.1.1       
-    ## [34] backports_1.2.1     checkmate_2.0.0     Hmisc_4.5-0        
-    ## [37] gridExtra_2.3       ggplot2_3.3.3       png_0.1-7          
-    ## [40] digest_0.6.27       stringi_1.5.3       numDeriv_2016.8-1.1
-    ## [43] grid_4.0.5          tools_4.0.5         magrittr_2.0.1     
-    ## [46] tibble_3.1.2        Formula_1.2-4       cluster_2.1.2      
-    ## [49] crayon_1.4.1        pkgconfig_2.0.3     MASS_7.3-53.1      
-    ## [52] ellipsis_0.3.2      Matrix_1.3-2        data.table_1.14.0  
-    ## [55] rstudioapi_0.13     rmarkdown_2.7       R6_2.5.0           
-    ## [58] rpart_4.1-15        nnet_7.3-15         nlme_3.1-152       
-    ## [61] compiler_4.0.5
+    ##  [1] RobStatTM_1.0.11    generics_0.1.4      stringi_1.8.7      
+    ##  [4] lattice_0.22-7      pracma_2.4.6        digest_0.6.39      
+    ##  [7] magrittr_2.0.4      evaluate_1.0.5      grid_4.5.1         
+    ## [10] RColorBrewer_1.1-3  fastmap_1.2.0       Matrix_1.7-3       
+    ## [13] nnet_7.3-20         backports_1.5.0     Formula_1.2-5      
+    ## [16] gridExtra_2.3       mgcv_1.9-3          scales_1.4.0       
+    ## [19] numDeriv_2016.8-1.1 codetools_0.2-20    cli_3.6.5          
+    ## [22] rlang_1.1.6         Hmisc_5.2-4         splines_4.5.1      
+    ## [25] base64enc_0.1-3     yaml_2.3.11         tools_4.5.1        
+    ## [28] checkmate_2.3.3     htmlTable_2.4.3     dplyr_1.1.4        
+    ## [31] colorspace_2.1-2    ggplot2_4.0.1       vctrs_0.6.5        
+    ## [34] R6_2.6.1            rpart_4.1.24        lifecycle_1.0.4    
+    ## [37] stringr_1.5.2       htmlwidgets_1.6.4   MASS_7.3-65        
+    ## [40] foreign_0.8-90      cluster_2.1.8.1     pkgconfig_2.0.3    
+    ## [43] pillar_1.11.1       gtable_0.3.6        data.table_1.17.8  
+    ## [46] glue_1.8.0          Rcpp_1.1.0          xfun_0.53          
+    ## [49] tibble_3.3.0        tidyselect_1.2.1    rstudioapi_0.17.1  
+    ## [52] knitr_1.50          farver_2.1.2        htmltools_0.5.8.1  
+    ## [55] nlme_3.1-168        rmarkdown_2.30      compiler_4.5.1     
+    ## [58] S7_0.2.1
